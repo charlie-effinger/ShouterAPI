@@ -631,17 +631,21 @@
       <workItem from="1394342634286" duration="1987000" />
       <workItem from="1394376792458" duration="473000" />
       <workItem from="1394377818186" duration="2276000" />
-      <workItem from="1394381158399" duration="337000" />
+      <workItem from="1394381158399" duration="471000" />
     </task>
     <task id="LOCAL-00001" summary="Resetting up the project.">
       <created>1394381317367</created>
       <updated>1394381317367</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Resetting up the project.&#10;">
+      <created>1394381501622</created>
+      <updated>1394381501622</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5073000" />
+    <option name="totallyTimeSpent" value="5207000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="48" y="-4" width="1319" height="773" extended-state="6" />
@@ -691,7 +695,8 @@
       <TodoPanelSettings />
     </option>
     <MESSAGE value="Resetting up the project." />
-    <option name="LAST_COMMIT_MESSAGE" value="Resetting up the project." />
+    <MESSAGE value="Resetting up the project.&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Resetting up the project.&#10;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
