@@ -9,7 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import shouter.api.handlers.BaseApiHandler;
 import shouter.api.handlers.shout.CreateHandler;
 import shouter.api.handlers.shout.SearchHandler;
+import shouter.api.handlers.shout.like.LikeHandler;
+import shouter.api.handlers.shout.like.UnLikeHandler;
 import shouter.api.handlers.user.AuthenticateHandler;
+import shouter.api.handlers.user.BlockHandler;
+import shouter.api.handlers.user.UnBlockHandler;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +23,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 /**
- * The servlet for
+ * The servlet for the Shouter API. Handles all shout and user requests.
  *
  * @author Charles Effinger (charles.effinger@cbsinteractive.com)
  * @version $Revision$, $LastChangedDate$
@@ -48,12 +52,34 @@ public class ShouterService extends HttpServlet {
         /**
          * Method used to authenticate a user.
          */
+        /**
+         * Method used to create a new shout.
+         */
+        LIKE_SHOUT(Arrays.asList("/shout/Like", "/shout/like/")),
+        /**
+         * Method used to search for shouts.
+         */
+        UN_LIKE_SHOUT(Arrays.asList("/shout/unlike", "/shout/unlike/")),
+        /**
+         * Method used to authenticate a user
+         */
         USER_AUTHENTICATE(Arrays.asList("/user/authenticate", "/user/authenticate/")),
+        /**
+         * Method used to create a user.
+         */
+        USER_CREATE(Arrays.asList("/user/create", "/user/create/")),
+        /**
+         * Method used to update a user.
+         */
+        USER_UPDATE(Arrays.asList("/user/update", "/user/update/")),
         /**
          * Method used to authenticate a user.
          */
-        USER_CREATE(Arrays.asList("/user/create", "/user/create/"));
-
+        BLOCK_USER(Arrays.asList("/user/block", "/user/block/")),
+        /**
+         * Method used to update a user.
+         */
+        UN_BLOCK_USER(Arrays.asList("/user/unblock", "/user/unblock/"));
 
         private final Collection<String> paths;
         private static final Map<String, ServiceMethod> methodsByPath = new HashMap<String, ServiceMethod>();
@@ -158,12 +184,28 @@ public class ShouterService extends HttpServlet {
                 case COMMENT_SEARCH:
                     handler = new shouter.api.handlers.shout.comment.SearchHandler(request);
                     break;
+                case LIKE_SHOUT:
+                    handler = new LikeHandler(request);
+                    break;
+                case UN_LIKE_SHOUT:
+                    handler = new UnLikeHandler(request);
+                    break;
                 case USER_AUTHENTICATE:
                     handler = new AuthenticateHandler(request);
                     break;
                 case USER_CREATE:
                     handler = new shouter.api.handlers.user.CreateHandler(request);
                     break;
+                case USER_UPDATE:
+                    handler = new shouter.api.handlers.user.UpdateHandler(request);
+                    break;
+                case BLOCK_USER:
+                    handler = new BlockHandler(request);
+                    break;
+                case UN_BLOCK_USER:
+                    handler = new UnBlockHandler(request);
+                    break;
+
             }
         }
 

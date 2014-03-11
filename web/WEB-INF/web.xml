@@ -11,7 +11,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>ShouterService</servlet-name>
-        <url-pattern>/shouter/api/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
 </web-app>

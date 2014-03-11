@@ -1,7 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0575e96f-ea7f-4b7f-9587-912bbcfcfd74" name="Default" comment="">
+    <list default="true" id="0575e96f-ea7f-4b7f-9587-912bbcfcfd74" name="Default" comment="Updatiing endpoints and adding functionality for likes and blocks. Lots of changes.">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/common/pushnotification/gcm/AndroidSender.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/api/dao/AwsConstants.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/api/dao/AwsCredentials.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/api/handlers/user/BlockHandler.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/api/beans/BlockedUser.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/api/beans/Comment.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/common/pushnotification/apn/IosSender.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/api/handlers/shout/like/LikeHandler.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/api/beans/LikedShout.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/common/pushnotification/PushNotificationSender.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/api/utils/SecurityUtil.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/api/handlers/user/UnBlockHandler.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/shouter/api/handlers/shout/like/UnLikeHandler.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/shouter/common/gcm/GoogleAPIClient.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/ApiConstants.java" afterPath="$PROJECT_DIR$/src/shouter/api/ApiConstants.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/handlers/user/AuthenticateHandler.java" afterPath="$PROJECT_DIR$/src/shouter/api/handlers/user/AuthenticateHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/dao/AwsDao.java" afterPath="$PROJECT_DIR$/src/shouter/api/dao/AwsDao.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/handlers/shout/CreateHandler.java" afterPath="$PROJECT_DIR$/src/shouter/api/handlers/shout/CreateHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/handlers/shout/comment/CreateHandler.java" afterPath="$PROJECT_DIR$/src/shouter/api/handlers/shout/comment/CreateHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/handlers/user/CreateHandler.java" afterPath="$PROJECT_DIR$/src/shouter/api/handlers/user/CreateHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/handlers/shout/SearchHandler.java" afterPath="$PROJECT_DIR$/src/shouter/api/handlers/shout/SearchHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/handlers/shout/comment/SearchHandler.java" afterPath="$PROJECT_DIR$/src/shouter/api/handlers/shout/comment/SearchHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/beans/Shout.java" afterPath="$PROJECT_DIR$/src/shouter/api/beans/Shout.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/servlets/ShouterService.java" afterPath="$PROJECT_DIR$/src/shouter/api/servlets/ShouterService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/handlers/user/UpdateHandler.java" afterPath="$PROJECT_DIR$/src/shouter/api/handlers/user/UpdateHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shouter/api/beans/User.java" afterPath="$PROJECT_DIR$/src/shouter/api/beans/User.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/WEB-INF/web.xml" afterPath="$PROJECT_DIR$/web/WEB-INF/web.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="ShouterAPI.iws" />
@@ -58,8 +85,8 @@
     </breakpoint_any>
     <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
-      <breakpoint url="file://$PROJECT_DIR$/src/shouter/api/servlets/ShouterService.java" line="87" class="shouter.api.servlets.ShouterService" package="shouter.api.servlets">
-        <option name="ENABLED" value="true" />
+      <breakpoint url="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/CreateHandler.java" line="39" class="shouter.api.handlers.shout.CreateHandler" package="shouter.api.handlers.shout">
+        <option name="ENABLED" value="false" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
         <option name="REMOVE_AFTER_HIT" value="false" />
@@ -70,10 +97,10 @@
         <option name="CONDITION_ENABLED" value="true" />
         <option name="CLASS_FILTERS_ENABLED" value="false" />
         <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
+        <option name="CONDITION" value="&#13;&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/CreateHandler.java" line="36" class="shouter.api.handlers.shout.CreateHandler" package="shouter.api.handlers.shout">
+      <breakpoint url="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/SearchHandler.java" line="79" class="shouter.api.handlers.shout.SearchHandler" package="shouter.api.handlers.shout">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -89,6 +116,25 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </line_breakpoints>
+    <method_breakpoints>
+      <breakpoint url="file://$PROJECT_DIR$/src/shouter/api/utils/SecurityUtil.java" line="14" class="shouter.api.utils.SecurityUtil" package="shouter.api.utils">
+        <option name="WATCH_ENTRY" value="true" />
+        <option name="WATCH_EXIT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="&#13;&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+    </method_breakpoints>
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -98,73 +144,114 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="web.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/WEB-INF/web.xml">
+      <file leaf-file-name="LikedShout.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/shouter/api/beans/LikedShout.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="0" selection-start="617" selection-end="617" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="414">
+            <state line="25" column="0" selection-start="614" selection-end="614" vertical-scroll-proportion="0.0" vertical-offset="212" max-vertical-offset="828">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1052#1053#0" expanded="true" />
+                <element signature="e#1082#1083#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Comment.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/shouter/api/beans/Comment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="36" column="17" selection-start="717" selection-end="717" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1296">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#972#973#0" expanded="true" />
+                <element signature="e#1003#1004#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="User.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/shouter/api/beans/User.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="42" column="39" selection-start="1113" selection-end="1113" vertical-scroll-proportion="0.0" vertical-offset="1325" max-vertical-offset="1674">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ShouterService.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/shouter/api/servlets/ShouterService.java">
+      <file leaf-file-name="CreateHandler.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/comment/CreateHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="119" column="0" selection-start="4041" selection-end="4041" vertical-scroll-proportion="0.0" vertical-offset="2142" max-vertical-offset="3222">
+            <state line="24" column="13" selection-start="682" selection-end="682" vertical-scroll-proportion="0.0" vertical-offset="497" max-vertical-offset="1800">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LikeHandler.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/like/LikeHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="28" column="40" selection-start="670" selection-end="670" vertical-scroll-proportion="0.0" vertical-offset="284" max-vertical-offset="990">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SearchHandler.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/comment/SearchHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="56" column="1" selection-start="1652" selection-end="1652" vertical-scroll-proportion="0.79545456" vertical-offset="320" max-vertical-offset="936">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DataUtil.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/shouter/api/utils/DataUtil.java">
+      <file leaf-file-name="AwsConstants.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/shouter/api/dao/AwsConstants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="13" selection-start="278" selection-end="278" vertical-scroll-proportion="0.0" vertical-offset="252" max-vertical-offset="1530">
+            <state line="24" column="67" selection-start="539" selection-end="539" vertical-scroll-proportion="0.0" vertical-offset="222" max-vertical-offset="1206">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SearchHandler.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/SearchHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="75" column="25" selection-start="2864" selection-end="2864" vertical-scroll-proportion="0.0" vertical-offset="878" max-vertical-offset="1494">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CreateHandler.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/CreateHandler.java">
+      <file leaf-file-name="Shout.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/shouter/api/beans/Shout.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="74" column="0" selection-start="2793" selection-end="2793" vertical-scroll-proportion="0.57879657" vertical-offset="950" max-vertical-offset="1566">
-              <folding />
+            <state line="61" column="40" selection-start="1306" selection-end="1306" vertical-scroll-proportion="0.0" vertical-offset="504" max-vertical-offset="2520">
+              <folding>
+                <element signature="e#1454#1455#0" expanded="true" />
+                <element signature="e#1485#1486#0" expanded="true" />
+                <element signature="e#2098#2099#0" expanded="true" />
+                <element signature="e#2129#2130#0" expanded="true" />
+                <element signature="e#2316#2317#0" expanded="true" />
+                <element signature="e#2348#2349#0" expanded="true" />
+                <element signature="e#3583#3584#0" expanded="true" />
+                <element signature="e#3617#3618#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BaseApiHandler.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/BaseApiHandler.java">
+      <file leaf-file-name="CreateHandler.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/user/CreateHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="0" selection-start="1058" selection-end="1058" vertical-scroll-proportion="0.0" vertical-offset="594" max-vertical-offset="1422">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.jsp" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/index.jsp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="9" selection-start="278" selection-end="278" vertical-scroll-proportion="0.0" vertical-offset="33" max-vertical-offset="396">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AwsDao.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/shouter/api/dao/AwsDao.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5508">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="spring-config.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/spring-config.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="8" selection-start="302" selection-end="302" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="198">
+            <state line="55" column="0" selection-start="1684" selection-end="1684" vertical-scroll-proportion="0.0" vertical-offset="891" max-vertical-offset="1530">
               <folding />
             </state>
           </provider>
@@ -185,10 +272,36 @@
       <list>
         <option value="$PROJECT_DIR$/web/index.jsp" />
         <option value="$PROJECT_DIR$/src/shouter/api/beans/ApiError.java" />
-        <option value="$PROJECT_DIR$/src/shouter/api/beans/Shout.java" />
-        <option value="$PROJECT_DIR$/src/shouter/api/beans/User.java" />
         <option value="$PROJECT_DIR$/web/WEB-INF/web.xml" />
+        <option value="$PROJECT_DIR$/src/shouter/api/dao/AwsCredentials.properties" />
+        <option value="$PROJECT_DIR$/src/shouter/api/utils/SecurityUtil.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/handlers/shout/SearchHandler.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/handlers/user/AuthenticateHandler.java" />
+        <option value="$PROJECT_DIR$/src/shouter/common/gcm/GoogleAPIClient.java" />
+        <option value="$PROJECT_DIR$/src/shouter/common/pushnotification/gcm/GoogleAPIClient.java" />
+        <option value="$PROJECT_DIR$/src/shouter/common/pushnotification/apn/AppleAPIClient.java" />
+        <option value="$PROJECT_DIR$/src/shouter/common/pushnotification/gcm/AndroidSender.java" />
+        <option value="$PROJECT_DIR$/src/shouter/common/pushnotification/apn/IosSender.java" />
+        <option value="$PROJECT_DIR$/src/shouter/common/pushnotification/PushNotificationSender.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/ApiConstants.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/servlets/ShouterService.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/beans/UserLikesShout.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/beans/BlockedUser.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/handlers/user/BlockHandler.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/handlers/user/UnBlockHandler.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/handlers/shout/like/UnLikeHandler.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/handlers/shout/like/LikeHandler.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/beans/User.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/handlers/user/CreateHandler.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/handlers/user/UpdateHandler.java" />
         <option value="$PROJECT_DIR$/src/shouter/api/handlers/shout/CreateHandler.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/dao/AwsConstants.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/beans/LikedShout.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/beans/Shout.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/beans/Comment.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/handlers/shout/comment/CreateHandler.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/dao/AwsDao.java" />
+        <option value="$PROJECT_DIR$/src/shouter/api/handlers/shout/comment/SearchHandler.java" />
       </list>
     </option>
   </component>
@@ -269,6 +382,218 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shouter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pushnotification" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shouter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shouter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="servlets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shouter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="handlers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shouter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="handlers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shout" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shouter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="handlers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shout" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="comment" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shouter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dao" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ShouterAPI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shouter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="beans" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="PackagesPane" />
@@ -282,7 +607,7 @@
     <property name="MemberChooser.sorted" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="MemberChooser.copyJavadoc" value="false" />
-    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
+    <property name="options.lastSelected" value="fileTemplates" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
@@ -292,6 +617,22 @@
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="79" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="99" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="105" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder2" value="2" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="1004" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder3" value="3" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="79" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder0" value="0" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth1" value="99" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder1" value="1" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth2" value="105" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="1004" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -631,7 +972,7 @@
       <workItem from="1394342634286" duration="1987000" />
       <workItem from="1394376792458" duration="473000" />
       <workItem from="1394377818186" duration="2276000" />
-      <workItem from="1394381158399" duration="471000" />
+      <workItem from="1394381158399" duration="37166000" />
     </task>
     <task id="LOCAL-00001" summary="Resetting up the project.">
       <created>1394381317367</created>
@@ -641,11 +982,15 @@
       <created>1394381501622</created>
       <updated>1394381501622</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Resetting up the project.&#10;">
+      <created>1394381633885</created>
+      <updated>1394381633885</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5207000" />
+    <option name="totallyTimeSpent" value="41902000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="48" y="-4" width="1319" height="773" extended-state="6" />
@@ -653,34 +998,65 @@
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.399361" sideWeight="0.49961978" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32935917" sideWeight="0.5003796" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39791358" sideWeight="0.5003802" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32935917" sideWeight="0.49962035" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24905087" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24297646" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32786885" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36512667" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39791358" sideWeight="0.49961978" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32786885" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24981017" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32935917" sideWeight="0.5003796" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32935917" sideWeight="0.49962035" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24297646" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32786885" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.36512667" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39791358" sideWeight="0.49961978" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32786885" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -696,10 +1072,15 @@
     </option>
     <MESSAGE value="Resetting up the project." />
     <MESSAGE value="Resetting up the project.&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Resetting up the project.&#10;" />
+    <MESSAGE value="Updatiing endpoints and adding functionality for likes and blocks. Lots of changes." />
+    <option name="LAST_COMMIT_MESSAGE" value="Updatiing endpoints and adding functionality for likes and blocks. Lots of changes." />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+    </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
@@ -751,7 +1132,19 @@
     <entry file="file://$PROJECT_DIR$/src/shouter/api/dao/AwsDao.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5508">
-          <folding />
+          <folding>
+            <element signature="e#3562#3581#0" expanded="true" />
+            <element signature="e#4585#4601#0" expanded="true" />
+            <element signature="e#4656#4671#0" expanded="true" />
+            <element signature="e#5275#5294#0" expanded="true" />
+            <element signature="e#7101#7117#0" expanded="true" />
+            <element signature="e#8093#8109#0" expanded="true" />
+            <element signature="e#11770#11786#0" expanded="true" />
+            <element signature="e#12043#12062#0" expanded="true" />
+            <element signature="e#12430#12438#0" expanded="true" />
+            <element signature="e#12493#12501#0" expanded="true" />
+            <element signature="e#12859#12887#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -802,20 +1195,6 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="390" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/shouter/api/dao/AwsDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5256">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/WEB-INF/web.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="0" selection-start="617" selection-end="617" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="414">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/spring-config.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="8" selection-start="302" selection-end="302" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="198">
@@ -823,9 +1202,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/BaseApiHandler.java">
+    <entry file="file://$PROJECT_DIR$/web/WEB-INF/web.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="0" selection-start="1058" selection-end="1058" vertical-scroll-proportion="0.0" vertical-offset="343" max-vertical-offset="1206">
+        <state line="11" column="17" selection-start="475" selection-end="475" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="414">
           <folding />
         </state>
       </provider>
@@ -837,16 +1216,257 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://$PROJECT_DIR$/web/WEB-INF/lib/aws-java-sdk-1.6.2.jar!/com/amazonaws/auth/ClasspathPropertiesFileCredentialsProvider.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="11" selection-start="388" selection-end="388" vertical-scroll-proportion="0.35405406" vertical-offset="31" max-vertical-offset="432">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///usr/lib/jvm/java-7-oracle/src.zip!/java/util/Set.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="223" column="1" selection-start="9221" selection-end="9221" vertical-scroll-proportion="0.28080228" vertical-offset="3502" max-vertical-offset="6624">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/ApiConstants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="72" selection-start="477" selection-end="477" vertical-scroll-proportion="0.0" vertical-offset="192" max-vertical-offset="918">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/AwsCredentials.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="616">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/dao/AwsCredentials.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="50" selection-start="125" selection-end="125" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="144">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/user/BlockHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="56" column="34" selection-start="1533" selection-end="1533" vertical-scroll-proportion="0.0" vertical-offset="482" max-vertical-offset="1116">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/like/UnLikeHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="8" selection-start="612" selection-end="643" vertical-scroll-proportion="0.0" vertical-offset="320" max-vertical-offset="972">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/beans/ApiError.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="50" column="33" selection-start="1094" selection-end="1102" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="828">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/common/pushnotification/apn/IosSender.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="54" selection-start="326" selection-end="326" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="342">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/common/pushnotification/gcm/AndroidSender.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="0" selection-start="874" selection-end="874" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1260">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/common/pushnotification/PushNotificationSender.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="1" selection-start="354" selection-end="354" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="414">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/beans/BlockedUser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="13" selection-start="513" selection-end="513" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="756">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/user/UnBlockHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="13" selection-start="1297" selection-end="1297" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1098">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/user/AuthenticateHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="59" column="0" selection-start="1602" selection-end="1602" vertical-scroll-proportion="0.0" vertical-offset="694" max-vertical-offset="1296">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/utils/SecurityUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="0" selection-start="1187" selection-end="1187" vertical-scroll-proportion="0.0" vertical-offset="857" max-vertical-offset="1206">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/user/UpdateHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="65" column="30" selection-start="1802" selection-end="1802" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1134">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/dao/AwsConstants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="67" selection-start="539" selection-end="539" vertical-scroll-proportion="0.0" vertical-offset="222" max-vertical-offset="1206">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/shouter/api/servlets/ShouterService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="119" column="0" selection-start="4041" selection-end="4041" vertical-scroll-proportion="0.0" vertical-offset="1734" max-vertical-offset="2916">
+        <state line="113" column="0" selection-start="3743" selection-end="3743" vertical-scroll-proportion="2.0298507" vertical-offset="432" max-vertical-offset="3600">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/like/LikeHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="40" selection-start="670" selection-end="670" vertical-scroll-proportion="0.0" vertical-offset="284" max-vertical-offset="990">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/CreateHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="74" column="0" selection-start="2793" selection-end="2793" vertical-scroll-proportion="0.57879657" vertical-offset="950" max-vertical-offset="1566">
+        <state line="100" column="33" selection-start="3756" selection-end="3790" vertical-scroll-proportion="0.6201299" vertical-offset="1220" max-vertical-offset="1836">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/user/CreateHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="0" selection-start="1684" selection-end="1684" vertical-scroll-proportion="0.0" vertical-offset="675" max-vertical-offset="1530">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/beans/User.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="39" selection-start="1113" selection-end="1113" vertical-scroll-proportion="0.0" vertical-offset="1361" max-vertical-offset="1710">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/beans/Shout.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="40" selection-start="1306" selection-end="1306" vertical-scroll-proportion="0.0" vertical-offset="504" max-vertical-offset="2520">
+          <folding>
+            <element signature="e#1454#1455#0" expanded="true" />
+            <element signature="e#1485#1486#0" expanded="true" />
+            <element signature="e#2098#2099#0" expanded="true" />
+            <element signature="e#2129#2130#0" expanded="true" />
+            <element signature="e#2316#2317#0" expanded="true" />
+            <element signature="e#2348#2349#0" expanded="true" />
+            <element signature="e#3583#3584#0" expanded="true" />
+            <element signature="e#3617#3618#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/beans/LikedShout.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="0" selection-start="614" selection-end="614" vertical-scroll-proportion="0.0" vertical-offset="212" max-vertical-offset="828">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1052#1053#0" expanded="true" />
+            <element signature="e#1082#1083#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/SearchHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="75" column="25" selection-start="2864" selection-end="2864" vertical-scroll-proportion="0.0" vertical-offset="878" max-vertical-offset="1494">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/BaseApiHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="0" selection-start="335" selection-end="335" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1206">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/comment/CreateHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="13" selection-start="682" selection-end="682" vertical-scroll-proportion="0.0" vertical-offset="497" max-vertical-offset="1800">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/dao/AwsDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="323" column="0" selection-start="13068" selection-end="13068" vertical-scroll-proportion="11.584856" vertical-offset="1071" max-vertical-offset="5616">
+          <folding>
+            <element signature="e#3562#3581#0" expanded="true" />
+            <element signature="e#4585#4601#0" expanded="true" />
+            <element signature="e#4656#4671#0" expanded="true" />
+            <element signature="e#5275#5294#0" expanded="true" />
+            <element signature="e#7101#7117#0" expanded="true" />
+            <element signature="e#8093#8109#0" expanded="true" />
+            <element signature="e#11770#11786#0" expanded="true" />
+            <element signature="e#12043#12062#0" expanded="true" />
+            <element signature="e#12430#12438#0" expanded="true" />
+            <element signature="e#12493#12501#0" expanded="true" />
+            <element signature="e#12859#12887#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/beans/Comment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="17" selection-start="717" selection-end="717" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1296">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#972#973#0" expanded="true" />
+            <element signature="e#1003#1004#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/shouter/api/handlers/shout/comment/SearchHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="56" column="1" selection-start="1652" selection-end="1652" vertical-scroll-proportion="0.79545456" vertical-offset="320" max-vertical-offset="936">
           <folding />
         </state>
       </provider>

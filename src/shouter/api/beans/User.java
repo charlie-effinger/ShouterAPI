@@ -4,8 +4,12 @@
  */
 package shouter.api.beans;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import shouter.api.dao.AwsConstants;
+import shouter.api.utils.DataUtil;
 
 /**
  * The User object bean. Mapped from the Dynamo DB table "Users"
@@ -14,73 +18,98 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
  * @version $Revision$, $LastChangedDate$
  */
 
-@DynamoDBTable(tableName = "Users")
-public class User {
+@DynamoDBTable(tableName = AwsConstants.USER_TABLE)
+public class User implements Comparable<User>{
 
-    private String phoneId;
+    private String userName;
 
-    private String firstName;
+    private String password;
 
-    private String lastName;
+    private String salt;
 
-    private String registrationId;
+    private String iosId;
 
-    public User() {
-        this(null);
+    private String androidId;
+
+    public User() { }
+
+    public User(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
     }
 
-    public User(String phoneId) {
-        this(phoneId, null, null);
+    public User(String userName, String iosId, String androidId) {
+        this.userName = userName;
+        if (!DataUtil.isEmpty(iosId)) {
+            this.iosId = iosId;
+        }
+        if (!DataUtil.isEmpty(androidId)) {
+            this.androidId = androidId;
+        }
     }
 
-    public User(String phoneId, String firstName, String lastName) {
-        this(phoneId, firstName, lastName, null);
+    public User(String userName, String password, String salt, String iosId, String androidId) {
+        this.userName = userName;
+        this.password = password;
+        this.salt = salt;
+        this.androidId = androidId;
+        this.iosId = iosId;
     }
 
-    public User(String phoneId, String firstName, String lastName, String registrationId) {
-        this.phoneId = phoneId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.registrationId = registrationId;
+    @DynamoDBHashKey(attributeName = AwsConstants.USER_NAME)
+    public String getUserName() {
+        return userName;
     }
 
-    @DynamoDBHashKey
-    public String getPhoneId() {
-        return phoneId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public void setPhoneId(String phoneId) {
-        this.phoneId = phoneId;
+    @JsonIgnore
+    @DynamoDBAttribute(attributeName = AwsConstants.PASSWORD)
+    public String getPassword() {
+        return password;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    @DynamoDBAttribute(attributeName = AwsConstants.IOS_ID)
+    public String getIosId() {
+        return iosId;
     }
 
-    public String getLastName() {
-        return lastName;
+    public void setIosId(String iosId) {
+        this.iosId = iosId;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    @DynamoDBAttribute(attributeName = AwsConstants.ANDROID_ID)
+    public String getAndroidId() {
+        return androidId;
     }
 
-    public String getRegistrationId() {
-        return registrationId;
+    public void setAndroidId(String androidId) {
+        this.androidId = androidId;
     }
 
-    public void setRegistrationId(String registrationId) {
-        this.registrationId = registrationId;
+    @JsonIgnore
+    @DynamoDBAttribute(attributeName = AwsConstants.SALT)
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     @Override
     public String toString() {
-        return "User [phoneId=" + phoneId + ", firstName=" + firstName + ", lastName=" + lastName +
-                ", registrationId=" + registrationId + "]";
+        return "User [userName=" + userName + ", iosId=" + iosId + ", androidId=" + androidId + "]";
+    }
+
+    public int compareTo(User o) {
+        return userName.compareTo(o.userName);
     }
 
 }

@@ -2,9 +2,11 @@
  * $Id$
  * $HeadURL$
  */
-package shouter.common.gcm;
+package shouter.common.pushnotification.gcm;
 
+import shouter.api.dao.AwsConstants;
 import shouter.api.dao.AwsDao;
+import shouter.common.pushnotification.PushNotificationSender;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -12,6 +14,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Class that handles making calls to the Google Project for Push Notifications
@@ -19,18 +22,18 @@ import java.util.Collection;
  * @author Charles Effinger (charles.effinger@cbsinteractive.com)
  * @version $Revision$, $LastChangedDate$
  */
-public class GoogleAPIClient {
+public class AndroidSender extends PushNotificationSender {
 
     private static final String GCM_URL = "https://android.googleapis.com/gcm/send";
 
-    public static void sendCommentNotification(Collection<String> phoneIds) {
+    public static void sendCommentNotification(Collection<String> userNames) {
         // create thread here?
 
-        if (!phoneIds.isEmpty()) {
+        if (!userNames.isEmpty()) {
             AwsDao awsDao = new AwsDao();
-            Collection<String> registrationIds = awsDao.getRegistrationIds(phoneIds);
+            Map<String, Collection<String>> pushNotificationIds = awsDao.getPushNotificationIds(userNames);
 
-            if (!registrationIds.isEmpty()) {
+            if (!pushNotificationIds.isEmpty()) {
                 // send the GCM shit I guess
                 try {
                     URL url = new URL(GCM_URL);
@@ -41,7 +44,7 @@ public class GoogleAPIClient {
                     connection.setUseCaches (false);
                     connection.setDoOutput(true);
                     DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-                    wr.writeBytes(buildJsonRequest(registrationIds));
+                    wr.writeBytes(buildJsonRequest(pushNotificationIds.get(AwsConstants.ANDROID_ID)));
                     wr.flush();
                     wr.close();
                     BufferedReader in = new BufferedReader(
@@ -56,6 +59,8 @@ public class GoogleAPIClient {
 
 
                 } catch (Exception ignore) { }
+
+                // TODO: IOS SHIT
             }
         }
     }

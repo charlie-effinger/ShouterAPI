@@ -6,10 +6,11 @@ package shouter.api.handlers.shout.comment;
 
 import shouter.api.ApiConstants;
 import shouter.api.beans.ApiError;
+import shouter.api.beans.Comment;
 import shouter.api.beans.Shout;
 import shouter.api.handlers.BaseApiHandler;
 import shouter.api.utils.DataUtil;
-import shouter.common.gcm.GoogleAPIClient;
+import shouter.common.pushnotification.PushNotificationSender;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -23,21 +24,19 @@ import java.util.HashSet;
  */
 public class CreateHandler extends BaseApiHandler {
 
-    private final String phoneId;
+    private final String userName;
 
-    private final String parentId;
+    private final String shoutId;
 
     private final String message;
-
-
 
     public CreateHandler(HttpServletRequest request) {
         super(request);
 
-        this.responseString = "shouts";
+        this.responseString = "comments";
 
-        this.phoneId = DataUtil.formatParameter(request, ApiConstants.PARAM_PHONE_ID);
-        this.parentId = DataUtil.formatParameter(request, ApiConstants.PARAM_PARENT_ID);
+        this.userName = DataUtil.formatParameter(request, ApiConstants.PARAM_USER_NAME);
+        this.shoutId = DataUtil.formatParameter(request, ApiConstants.PARAM_SHOUT_ID);
         this.message = DataUtil.formatParameter(request, ApiConstants.PARAM_MESSAGE);
     }
 
@@ -45,8 +44,8 @@ public class CreateHandler extends BaseApiHandler {
     protected boolean validateParameters() {
 
         // validate the parent ID
-        if (DataUtil.isEmpty(parentId)) {
-            errors.add(new ApiError("400", ApiConstants.MISSING_PREFIX + ApiConstants.PARAM_PARENT_ID,
+        if (DataUtil.isEmpty(shoutId)) {
+            errors.add(new ApiError("400", ApiConstants.MISSING_PREFIX + ApiConstants.PARAM_SHOUT_ID,
                     "Missing parentId. Please provide a parentId."));
         }
 
@@ -67,29 +66,27 @@ public class CreateHandler extends BaseApiHandler {
     @Override
     protected void performRequest() {
         // set up the comment
-        Shout commentToPost = new Shout();
-        commentToPost.setParentId(parentId);
-        commentToPost.setMessage(message);
-        commentToPost.setPhoneId(phoneId);
+        Comment commentToPost = new Comment(shoutId, message, userName);
         commentToPost.setTimestamp(System.currentTimeMillis() / 1000L);
-        // post and retrieve comments
 
-        Collection<Shout> comments = awsDao.postComment(commentToPost);
-        Shout parentShout = awsDao.getShoutFromId(parentId);
+        // post and retrieve comments
+        Collection<Comment> comments = awsDao.postComment(commentToPost);
+        Shout parentShout = awsDao.getShoutFromId(shoutId);
         parentShout.setComments(comments);
+
         if (comments != null) {  // should never be null, just a sanity check I suppose
-            Collection<String> phoneIds = new HashSet<String>();
-            for (Shout comment: comments) {
-                if (!comment.getPhoneId().equals(commentToPost.getPhoneId())) {
-                    phoneIds.add(comment.getPhoneId());
+            Collection<String> userNames = new HashSet<String>();
+            for (Comment comment: comments) {
+                if (!comment.getUserName().equals(commentToPost.getUserName())) {
+                    userNames.add(comment.getUserName());
                 }
             }
             if (parentShout != null) { // add the original shouter to the phoneId list
-                if (!parentShout.getPhoneId().equals(commentToPost.getPhoneId())) {
-                    phoneIds.add(parentShout.getPhoneId());
+                if (!parentShout.getUserName().equals(commentToPost.getUserName())) {
+                    userNames.add(parentShout.getUserName());
                 }
             }
-            GoogleAPIClient.sendCommentNotification(phoneIds);
+            PushNotificationSender.sendNotifications(userNames);
         }
 
         responseObjects.add(parentShout);

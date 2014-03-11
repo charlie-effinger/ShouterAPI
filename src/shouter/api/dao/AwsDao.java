@@ -4,18 +4,21 @@
  */
 package shouter.api.dao;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.*;
-import shouter.api.beans.Shout;
-import shouter.api.beans.User;
+import com.amazonaws.services.dynamodbv2.model.Condition;
+import shouter.api.beans.*;
+import shouter.api.utils.DataUtil;
 
+import javax.xml.crypto.Data;
 import java.util.*;
+import java.util.concurrent.locks.*;
 
 /**
  * Data access object for connecting with the Dynamo DB tables in AWS.
@@ -25,28 +28,10 @@ import java.util.*;
  */
 public class AwsDao {
 
-    private final AmazonDynamoDB client;
-
     private final DynamoDBMapper mapper;
 
-    // TODO: Get these out of Java code!!!
-    private final String ACCESS_KEY = "AKIAJGBUWRJVYV2TZI5A";
-    private final String SECRET_KEY = "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";
-
-    private final String SHOUT_TABLE = "Shouts";
-
-    private final String USER_TABLE = "Users";
-
-    public static List<String> SHOUT_TABLE_PARAMS = Arrays.asList("id", "message", "timestamp", "phoneId",
-            "parentId", "latitude", "longitude");
-
-    public static List<String> USER_TABLE_PARAMS = Arrays.asList("phoneId", "firstName", "lastName", "registrationId");
-
-    private final double DEFAULT_LOCATION_CONSTRAINT = 1.0 / 120.0;  // default location constraint is half a minute
-
     public AwsDao() {
-        AWSCredentials credentials = new BasicAWSCredentials(ACCESS_KEY, SECRET_KEY);
-        this.client = new AmazonDynamoDBClient(credentials);
+        AmazonDynamoDB client = new AmazonDynamoDBClient(new ClasspathPropertiesFileCredentialsProvider());
         client.setRegion(Region.getRegion(Regions.US_WEST_2));
         this.mapper = new DynamoDBMapper(client);
     }
@@ -58,243 +43,281 @@ public class AwsDao {
      * @param longitude  the longitude to search around
      * @return  all shouts within the given latitude and longitude
      */
-    public Collection<Shout> getShouts(Double latitude, Double longitude) {
+    public Collection<Shout> getShouts(Double latitude, Double longitude, Long timeConstraint,
+                                       Double locationConstraint, String userName) {
         // default the time constraint to 15 minutes
-        // TODO: make this configurable by the user
-        long timeFrame = (System.currentTimeMillis() / 1000L) - 900;
+        if (timeConstraint == null) {
+            timeConstraint = AwsConstants.DEFAULT_TIME_CONSTRAINT;
+        }
+
+        if (locationConstraint == null) {
+            locationConstraint = AwsConstants.DEFAULT_LOCATION_CONSTRAINT;
+        }
+        long timeFrame = (System.currentTimeMillis() / 1000L) - timeConstraint;
 
         // set up the latitude condition (between +/- LOCATION_CONSTRAINT)
         Condition latitudeCondition = new Condition().withComparisonOperator(ComparisonOperator.BETWEEN.toString())
-                .withAttributeValueList(new AttributeValue().withN(String.valueOf(latitude - DEFAULT_LOCATION_CONSTRAINT)),
-                        new AttributeValue().withN(String.valueOf(latitude + DEFAULT_LOCATION_CONSTRAINT)));
+                .withAttributeValueList(new AttributeValue().withN(String.valueOf(latitude - locationConstraint)),
+                        new AttributeValue().withN(String.valueOf(latitude + locationConstraint)));
 
         // set up the longitude condition (between +/- LOCATION_CONSTRAINT)
         Condition longitudeCondition = new Condition().withComparisonOperator(ComparisonOperator.BETWEEN.toString())
-                .withAttributeValueList(new AttributeValue().withN(String.valueOf(longitude - DEFAULT_LOCATION_CONSTRAINT)),
-                        new AttributeValue().withN(String.valueOf(longitude + DEFAULT_LOCATION_CONSTRAINT)));
+                .withAttributeValueList(new AttributeValue().withN(String.valueOf(longitude - locationConstraint)),
+                        new AttributeValue().withN(String.valueOf(longitude + locationConstraint)));
 
         // set up the time condition (> CURRENT_TIME - TIME_CONSTRAINT)
         Condition timeCondition = new Condition().withComparisonOperator(ComparisonOperator.GT.toString())
                 .withAttributeValueList(new AttributeValue().withN(String.valueOf(timeFrame)));
 
+        List<AttributeValue> filterUserNames = getBlockedUserNames(userName);
+        filterUserNames.addAll(getBlockedByUserNames(userName));
+        Condition blockedUserNameCondition = new Condition()
+                .withComparisonOperator(ComparisonOperator.NE.toString())
+                .withAttributeValueList(filterUserNames);
+
         // build the condition map
         Map<String, Condition> conditions = new HashMap<String, Condition>();
-        conditions.put("latitude", latitudeCondition);
-        conditions.put("longitude", longitudeCondition);
-        conditions.put("timestamp", timeCondition);
+        conditions.put(AwsConstants.LATITUDE, latitudeCondition);
+        conditions.put(AwsConstants.LONGITUDE, longitudeCondition);
+        conditions.put(AwsConstants.EXPIRATION_TIMESTAMP, timeCondition);
+        conditions.put(AwsConstants.USER_NAME, blockedUserNameCondition);
 
-        // build the scan request
-        ScanRequest scanRequest = new ScanRequest()
-                .withTableName(SHOUT_TABLE)
-                .withScanFilter(conditions)
-                .withAttributesToGet(SHOUT_TABLE_PARAMS);
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        scanExpression.setScanFilter(conditions);
 
-        // perform the scan
-        ScanResult result = client.scan(scanRequest);
+        Collection<Shout> shouts = mapper.scan(Shout.class, scanExpression);
+        shouts = addLikes(shouts, userName);
 
-        // return the shouts after they have been parsed.
-        return parseShouts(result.getItems());
+        return shouts;
     }
 
-    public Collection<Shout> postShout(Shout shout) {
+    /**
+     * Determines the shouts that a given user has liked.
+     *
+     * @param shouts - the collection of shouts to check
+     * @param userName - the userName to check for the shouts
+     * @return - the same collection of shouts given, but with the proper 'liked' information
+     */
+    private Collection<Shout> addLikes(Collection<Shout> shouts, String userName) {
+        Collection<AttributeValue> shoutIds = new HashSet<AttributeValue>();
+        Map<String, Shout> shoutsById = new TreeMap<String, Shout>();
+        for (Shout shout : shouts) {
+            shoutIds.add(new AttributeValue().withS(shout.getId()));
+            shoutsById.put(shout.getId(), shout);
+        }
+
+        Condition shoutIdCondition = new Condition()
+                .withComparisonOperator(ComparisonOperator.IN.toString())
+                .withAttributeValueList(shoutIds);
+        Condition userNameCondition = new Condition()
+                .withComparisonOperator(ComparisonOperator.EQ.toString())
+                .withAttributeValueList(new AttributeValue(userName));
+
+        Map<String, Condition> conditions = new HashMap<String, Condition>();
+        conditions.put(AwsConstants.SHOUT_ID, shoutIdCondition);
+        conditions.put(AwsConstants.USER_NAME, userNameCondition);
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        scanExpression.setScanFilter(conditions);
+
+        List<LikedShout> likedShouts = mapper.scan(LikedShout.class, scanExpression);
+        for (LikedShout likedShout : likedShouts) {
+            shoutsById.get(likedShout.getShoutId()).setLiked(true);
+        }
+
+        return shoutsById.values();
+    }
+
+    public Collection<Shout> postShout(Shout shout, Long timeConstraint, Double locationConstraint) {
         try {
             mapper.save(shout);
         } catch (Exception ignore) { }
 
-        return getShouts(shout.getLatitude(), shout.getLongitude());
+        return getShouts(shout.getLatitude(), shout.getLongitude(),
+                timeConstraint, locationConstraint, shout.getUserName());
     }
 
-    public User createUser(User user) {
+    public void unblockUser(BlockedUser blockedUser) {
+        mapper.delete(blockedUser);
+    }
+
+    public void blockUser(BlockedUser blockedUser) {
+        mapper.save(blockedUser);
+    }
+
+    public List<AttributeValue> getBlockedUserNames(String userName) {
+        // set up the shoutId condition
+        Condition userNameCondition = new Condition()
+                .withComparisonOperator(ComparisonOperator.EQ.toString())
+                .withAttributeValueList(new AttributeValue().withS(userName));
+
+        Map<String, Condition> conditions = new HashMap<String, Condition>();
+        conditions.put(AwsConstants.USER_NAME, userNameCondition);
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        scanExpression.setScanFilter(conditions);
+
+        Collection<BlockedUser> blockedUsers = mapper.scan(BlockedUser.class, scanExpression);
+
+        List<AttributeValue> blockedUserNames = new LinkedList<AttributeValue>();
+        for (BlockedUser blockedUser : blockedUsers) {
+            blockedUserNames.add(new AttributeValue(blockedUser.getBlockedUserName()));
+        }
+
+        return blockedUserNames;
+    }
+
+    public List<AttributeValue> getBlockedByUserNames(String blockedUserName) {
+        // set up the shoutId condition
+        Condition userNameCondition = new Condition()
+                .withComparisonOperator(ComparisonOperator.EQ.toString())
+                .withAttributeValueList(new AttributeValue().withS(blockedUserName));
+
+        Map<String, Condition> conditions = new HashMap<String, Condition>();
+        conditions.put(AwsConstants.BLOCKED_USER_NAME, userNameCondition);
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        scanExpression.setScanFilter(conditions);
+
+        Collection<BlockedUser> blockedUsers = mapper.scan(BlockedUser.class, scanExpression);
+
+        List<AttributeValue> blockedByUserNames = new LinkedList<AttributeValue>();
+        for (BlockedUser blockedUser : blockedUsers) {
+            blockedByUserNames.add(new AttributeValue(blockedUser.getBlockedUserName()));
+        }
+
+        return blockedByUserNames;
+    }
+    public void likeShout(LikedShout likedShout) {
+        mapper.save(likedShout);
+
+        //update expirationTimestamp and numLikes of shout
+        Shout shout = getShoutFromId(likedShout.getShoutId());
+        shout.setNumLikes(shout.getNumLikes()+1);
+        shout.setExpirationTimestamp(System.currentTimeMillis() / 1000L);
+        mapper.save(shout);
+    }
+
+    public void unLikeShout(LikedShout likedShout) {
+        mapper.delete(likedShout);
+
+        //update numLikes of shout
+        Shout shout = getShoutFromId(likedShout.getShoutId());
+        shout.setNumLikes(shout.getNumLikes()-1);
+        mapper.save(shout);
+    }
+
+    public User saveUser(User user) {
         try {
             mapper.save(user);
         }  catch (Exception ignore) { }
         return user;
     }
 
-    public User authenticateUser(String phoneId) {
-        Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
-        key.put("phoneId", new AttributeValue().withS(phoneId));
 
-        GetItemRequest getItemRequest = new GetItemRequest()
-                .withTableName(USER_TABLE)
-                .withKey(key)
-                .withAttributesToGet(USER_TABLE_PARAMS);
-
-        GetItemResult result = client.getItem(getItemRequest);
-
-        User user = null;
-        if (result.getItem() != null) {
-            user = new User();
-            if (result.getItem().containsKey("phoneId")) {
-                user.setPhoneId(result.getItem().get("phoneId").getS());
-            }
-
-            if (result.getItem().containsKey("firstName")) {
-                user.setFirstName(result.getItem().get("firstName").getS());
-            }
-
-            if (result.getItem().containsKey("lastName")) {
-                user.setLastName(result.getItem().get("lastName").getS());
-            }
-
-            if (result.getItem().containsKey("registrationId")) {
-                user.setRegistrationId(result.getItem().get("registrationId").getS());
-            }
-        }
-
-        return user;
+    public User getUser(String userName) {
+        return mapper.load(User.class, userName);
     }
 
-    public Collection<Shout> postComment(Shout shout) {
+    public boolean checkUserName(String userName) {
+        boolean isTaken = false;
+        User user = getUser(userName);
+        if (user != null && !DataUtil.isEmpty(user.getUserName())) {
+            isTaken = true;
+        }
+        return isTaken;
+    }
+
+
+    public Collection<Comment> postComment(Comment comment) {
         try {
+            mapper.save(comment);
+            Shout shout = getShoutFromId(comment.getShoutId());
+            shout.setNumComments(shout.getNumComments()+1);
             mapper.save(shout);
+
         } catch (Exception ignore) { }
 
-        return getShoutComments(shout.getParentId());
+
+        return getShoutComments(comment.getShoutId(), comment.getUserName());
     }
 
     public Shout getShoutFromId(String id) {
-
-        Condition keyCondition = new Condition()
-                .withComparisonOperator(ComparisonOperator.EQ.toString())
-                .withAttributeValueList(new AttributeValue().withS(id));
-
-        Map<String, Condition> keyConditions = new HashMap<String, Condition>();
-        keyConditions.put("id", keyCondition);
-
-        QueryRequest queryRequest = new QueryRequest().withTableName(SHOUT_TABLE)
-                .withKeyConditions(keyConditions)
-                .withAttributesToGet(SHOUT_TABLE_PARAMS);
-
-        QueryResult result = client.query(queryRequest);
-
-        return parseShout(result.getItems().get(0));
+        return mapper.load(Shout.class, id);
     }
 
     /**
      * Returns all the comments for a given shout ID
      *
-     * @param parentId - the shout ID to query for comment shouts
+     * @param shoutId - the shout ID to query for comment shouts
      * @return all comments for the given shout
      */
-    public Collection<Shout> getShoutComments(String parentId) {
-
-        // set up the parentId condition
-        Condition parentIdCondition = new Condition()
+    public Collection<Comment> getShoutComments(String shoutId, String userName) {
+        // set up the shoutId condition
+        Condition shoutIdCondition = new Condition()
                 .withComparisonOperator(ComparisonOperator.EQ.toString())
-                .withAttributeValueList(new AttributeValue().withS(parentId));
+                .withAttributeValueList(new AttributeValue().withS(shoutId));
 
-        Map<String, Condition> keyConditions = new HashMap<String, Condition>();
-        keyConditions.put("parentId", parentIdCondition);
+        List<AttributeValue> filterUserNames = getBlockedUserNames(userName);
+        filterUserNames.addAll(getBlockedByUserNames(userName));
 
-        // build the scan request
-        ScanRequest scanRequest = new ScanRequest()
-                .withTableName(SHOUT_TABLE)
-                .withScanFilter(keyConditions)
-                .withAttributesToGet(SHOUT_TABLE_PARAMS);
+        Condition blockedUserNameCondition = new Condition()
+                .withComparisonOperator(ComparisonOperator.NE.toString())
+                .withAttributeValueList(filterUserNames);
 
-        // retrieve the comments
-        ScanResult result = client.scan(scanRequest);
+        Map<String, Condition> conditions = new HashMap<String, Condition>();
+        conditions.put(AwsConstants.SHOUT_ID, shoutIdCondition);
+        conditions.put(AwsConstants.USER_NAME, blockedUserNameCondition);
 
-        return parseShouts(result.getItems());
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        scanExpression.setScanFilter(conditions);
+
+        return mapper.scan(Comment.class, scanExpression);
     }
 
     /**
      * Returns all the registration IDs for the given phone IDs
      *
-     * @param phoneIds - the phone IDs to retrieve registration Ids
+     * @param userNames - the phone IDs to retrieve registration Ids
      * @return all registration IDs for the given phone IDs
      */
-    public Collection<String> getRegistrationIds(Collection<String> phoneIds) {
+    public Map<String, Collection<String>> getPushNotificationIds(Collection<String> userNames) {
 
         // set up the parentId condition
-        Condition phoneIdsCondition = new Condition()
+        Condition userNamesCondition = new Condition()
                 .withComparisonOperator(ComparisonOperator.IN.toString());
 
         List<AttributeValue> attributeValues = new LinkedList<AttributeValue>();
-        for (String phoneId : phoneIds) {
-            attributeValues.add(new AttributeValue().withS(phoneId));
+        for (String userName : userNames) {
+            attributeValues.add(new AttributeValue().withS(userName));
         }
 
-        phoneIdsCondition.withAttributeValueList(attributeValues);
+        userNamesCondition.withAttributeValueList(attributeValues);
 
         Map<String, Condition> keyConditions = new HashMap<String, Condition>();
-        keyConditions.put("phoneId", phoneIdsCondition);
+        keyConditions.put(AwsConstants.USER_NAME, userNamesCondition);
 
-        // build the scan request
-        ScanRequest scanRequest = new ScanRequest()
-                .withTableName(USER_TABLE)
-                .withScanFilter(keyConditions)
-                .withAttributesToGet(Arrays.asList("registrationId"));
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        scanExpression.setScanFilter(keyConditions);
 
-        // retrieve the comments
-        ScanResult result = client.scan(scanRequest);
+        Collection<User> users = mapper.scan(User.class, scanExpression);
+
 
         // parse the registrationIds
-        Collection<String> registrationIds = new HashSet<String>();
-        for (Map<String, AttributeValue> item : result.getItems()) {
-            registrationIds.add(item.get("registrationId").getS());
-        }
-
-        return registrationIds;
-    }
-
-    /**
-     * Parses a ScanResult of shouts and
-     *
-     * @param shoutList the list of shouts to parse
-     * @return  a collection of parsed shouts
-     */
-    private Collection<Shout> parseShouts(List<Map<String, AttributeValue>> shoutList) {
-        Set<Shout> shouts = new TreeSet<Shout>(new TimestampComparator());
-        for (Map<String, AttributeValue> shout : shoutList) {
-            shouts.add(parseShout(shout));
-        }
-
-        return shouts;
-    }
-
-    private Shout parseShout(Map<String, AttributeValue> shoutMap) {
-        Shout shout = new Shout();
-        if (shoutMap != null) {
-            if (shoutMap.containsKey("id")) {
-                shout.setId(shoutMap.get("id").getS());
+        Collection<String> iosIds = new HashSet<String>();
+        Collection<String> androidIds = new HashSet<String>();
+        for (User user: users) {
+            if (!DataUtil.isEmpty(user.getIosId())) {
+                iosIds.add(user.getIosId());
             }
-            if (shoutMap.containsKey("message")) {
-                shout.setMessage(shoutMap.get("message").getS());
-            }
-            if (shoutMap.containsKey("timestamp")) {
-                shout.setTimestamp(Long.parseLong(shoutMap.get("timestamp").getN()));
-            }
-            if (shoutMap.containsKey("phoneId")) {
-                shout.setPhoneId(shoutMap.get("phoneId").getS());
-            }
-            if (shoutMap.containsKey("parentId")) {
-                shout.setParentId(shoutMap.get("parentId").getS());
-            }
-            if (shoutMap.containsKey("latitude")) {
-                shout.setLatitude(Double.parseDouble(shoutMap.get("latitude").getN()));
-            }
-            if (shoutMap.containsKey("longitude")) {
-                shout.setLongitude(Double.parseDouble(shoutMap.get("longitude").getN()));
+            if (!DataUtil.isEmpty(user.getAndroidId())) {
+                androidIds.add(user.getAndroidId());
             }
         }
+        Map<String, Collection<String>> pushNotificationIds = new HashMap<String, Collection<String>>();
+        pushNotificationIds.put(AwsConstants.IOS_ID, iosIds);
+        pushNotificationIds.put(AwsConstants.ANDROID_ID, androidIds);
 
-        return shout;
+        return pushNotificationIds;
     }
-
-
-    /**
-     * Custom comparator to sort sites by contextId, allowing for sites to be displayed
-     * in ascending order in the response
-     */
-    public static class TimestampComparator implements Comparator<Shout> {
-
-        @Override
-        public int compare(Shout shout1, Shout shout2) {
-            return shout2.getTimestamp().compareTo(shout1.getTimestamp());
-        }
-
-    }
-
 }

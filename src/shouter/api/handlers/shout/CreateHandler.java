@@ -11,6 +11,7 @@ import shouter.api.handlers.BaseApiHandler;
 import shouter.api.utils.DataUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
 import java.util.Collection;
 
 /**
@@ -27,7 +28,9 @@ public class CreateHandler extends BaseApiHandler {
     private final String message;
     private final Double longitude;
     private final Double latitude;
-    private final String phoneId;
+    private final String userName;
+    private final Long timeConstraint;
+    private final Double locationConstraint;
 
     public CreateHandler(HttpServletRequest request) {
         super(request);
@@ -37,7 +40,19 @@ public class CreateHandler extends BaseApiHandler {
         this.message = DataUtil.formatParameter(request, ApiConstants.PARAM_MESSAGE);
         this.latitude = Double.parseDouble(DataUtil.formatParameter(request, ApiConstants.PARAM_LATITUDE));
         this.longitude = Double.parseDouble(DataUtil.formatParameter(request, ApiConstants.PARAM_LONGITUDE));
-        this.phoneId = DataUtil.formatParameter(request, ApiConstants.PARAM_PHONE_ID);
+        this.userName = DataUtil.formatParameter(request, ApiConstants.PARAM_USER_NAME);
+        String temp = DataUtil.formatParameter(request, ApiConstants.PARAM_LOCATION_CONSTRAINT);
+        if (DataUtil.isEmpty(temp)) {
+            locationConstraint = null;
+        } else {
+            locationConstraint = Double.parseDouble(temp);
+        }
+        temp = DataUtil.formatParameter(request, ApiConstants.PARAM_TIME_CONSTRAINT);
+        if (DataUtil.isEmpty(temp)) {
+            timeConstraint = null;
+        } else {
+            timeConstraint = Long.parseLong(temp);
+        }
 
     }
 
@@ -82,9 +97,10 @@ public class CreateHandler extends BaseApiHandler {
         shoutToPost.setLatitude(latitude);
         shoutToPost.setLongitude(longitude);
         shoutToPost.setMessage(message);
-        shoutToPost.setPhoneId(phoneId);
+        shoutToPost.setUserName(userName);
         shoutToPost.setTimestamp(System.currentTimeMillis() / 1000L);
-        Collection<Shout> shouts = awsDao.postShout(shoutToPost);
+        shoutToPost.setExpirationTimestamp(shoutToPost.getTimestamp());
+        Collection<Shout> shouts = awsDao.postShout(shoutToPost, timeConstraint, locationConstraint);
 
         responseObjects.addAll(shouts);
     }

@@ -11,6 +11,7 @@ import shouter.api.handlers.BaseApiHandler;
 import shouter.api.utils.DataUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
 import java.util.Collection;
 
 /**
@@ -23,14 +24,30 @@ public class SearchHandler extends BaseApiHandler {
 
     private Double longitude = null;
     private Double latitude = null;
+    private Double locationConstraint = null;
+    private Long timeConstraint = null;
+    private String userName;
 
     public SearchHandler(HttpServletRequest request) {
         super(request);
 
         this.responseString = "shouts";
+        this.userName = DataUtil.formatParameter(request, ApiConstants.PARAM_USER_NAME);
         try {
             this.latitude = Double.parseDouble(DataUtil.formatParameter(request, ApiConstants.PARAM_LATITUDE));
             this.longitude = Double.parseDouble(DataUtil.formatParameter(request, ApiConstants.PARAM_LONGITUDE));
+            String temp = DataUtil.formatParameter(request, ApiConstants.PARAM_LOCATION_CONSTRAINT);
+            if (DataUtil.isEmpty(temp)) {
+                locationConstraint = null;
+            } else {
+                locationConstraint = Double.parseDouble(temp);
+            }
+            temp = DataUtil.formatParameter(request, ApiConstants.PARAM_TIME_CONSTRAINT);
+            if (DataUtil.isEmpty(temp)) {
+                timeConstraint = null;
+            } else {
+                timeConstraint = Long.parseLong(temp);
+            }
         } catch (Exception ignore) {}
     }
 
@@ -65,7 +82,7 @@ public class SearchHandler extends BaseApiHandler {
     @Override
     protected void performRequest() {
         // retrieve and post the shouts
-        Collection<Shout> shouts = awsDao.getShouts(latitude, longitude);
+        Collection<Shout> shouts = awsDao.getShouts(latitude, longitude, timeConstraint, locationConstraint, userName);
         responseObjects.addAll(shouts);
     }
 }

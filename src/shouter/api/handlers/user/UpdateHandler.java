@@ -9,8 +9,11 @@ import shouter.api.beans.ApiError;
 import shouter.api.beans.User;
 import shouter.api.handlers.BaseApiHandler;
 import shouter.api.utils.DataUtil;
+import shouter.api.utils.SecurityUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 /**
  * Handles authenticating a user's phone ID. If the phone hasn't been registered yet,
@@ -21,33 +24,27 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class UpdateHandler extends BaseApiHandler {
 
-    private final String phoneId;
+    private final String userName;
 
-    private final String firstName;
+    private final String iosId;
 
-    private final String lastName;
-
-    private final String registrationId;
+    private final String androidId;
 
     public UpdateHandler(HttpServletRequest request) {
         super(request);
 
         this.responseString = "user";
 
-        this.phoneId = DataUtil.formatParameter(request, ApiConstants.PARAM_PHONE_ID);
-        this.firstName = DataUtil.formatParameter(request, ApiConstants.PARAM_FIRST_NAME);
-        this.lastName = DataUtil.formatParameter(request, ApiConstants.PARAM_LAST_NAME);
-        this.registrationId = DataUtil.formatParameter(request, ApiConstants.PARAM_REGISTRATION_ID);
-
+        this.userName = DataUtil.formatParameter(request, ApiConstants.PARAM_USER_NAME);
+        this.iosId = DataUtil.formatParameter(request, ApiConstants.PARAM_IOS_ID);
+        this.androidId = DataUtil.formatParameter(request, ApiConstants.PARAM_ANDROID_ID);
     }
 
     @Override
     protected boolean validateParameters() {
 
-        // validate the phone ID
-        if (DataUtil.isEmpty(phoneId)) {
-            errors.add(new ApiError(null, null, null));
-        } else if (!DataUtil.isInteger(phoneId)) {
+        // validate the userName
+        if (DataUtil.isEmpty(userName)) {
             errors.add(new ApiError(null, null, null));
         }
 
@@ -56,9 +53,17 @@ public class UpdateHandler extends BaseApiHandler {
 
     @Override
     protected void performRequest() {
+
         // set up and save the user
-        User user = new User(phoneId, firstName, lastName, registrationId);
-        awsDao.createUser(user);
+        User user = awsDao.getUser(userName);
+        if (!DataUtil.isEmpty(iosId)) {
+            user.setIosId(iosId);
+        }
+        if (!DataUtil.isEmpty(androidId)) {
+            user.setAndroidId(androidId);
+        }
+
+        awsDao.saveUser(user);
         responseObjects.add(user);
     }
 }
