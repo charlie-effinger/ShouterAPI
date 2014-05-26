@@ -53,17 +53,21 @@ public class UpdateHandler extends BaseApiHandler {
 
     @Override
     protected void performRequest() {
+        try {
+            // set up and save the user
+            User user = awsDao.getUser(userName);
+            if (!DataUtil.isEmpty(iosId)) {
+                user.setIosId(iosId);
+            }
+            if (!DataUtil.isEmpty(androidId)) {
+                user.setAndroidId(androidId);
+            }
 
-        // set up and save the user
-        User user = awsDao.getUser(userName);
-        if (!DataUtil.isEmpty(iosId)) {
-            user.setIosId(iosId);
+            awsDao.saveUser(user);
+            responseObjects.add(user);
+        } catch (Exception e) {
+            this.responseString = "errors";
+            responseObjects.add(new ApiError(null, null, null));
         }
-        if (!DataUtil.isEmpty(androidId)) {
-            user.setAndroidId(androidId);
-        }
-
-        awsDao.saveUser(user);
-        responseObjects.add(user);
     }
 }

@@ -2,11 +2,11 @@
  * $Id$
  * $HeadURL$
  */
-package shouter.api.handlers.shout.like;
+package shouter.api.handlers.shout.comment.like;
 
 import shouter.api.ApiConstants;
 import shouter.api.beans.ApiError;
-import shouter.api.beans.LikedShout;
+import shouter.api.beans.LikedComment;
 import shouter.api.handlers.BaseApiHandler;
 import shouter.api.utils.DataUtil;
 
@@ -24,11 +24,14 @@ public class UnLikeHandler extends BaseApiHandler {
 
     private final String shoutId;
 
+    private final String commentId;
+
     public UnLikeHandler(HttpServletRequest request) {
         super(request);
         this.responseString = "isLiked";
         this.userName = DataUtil.formatParameter(request, ApiConstants.PARAM_USER_NAME);
         this.shoutId = DataUtil.formatParameter(request, ApiConstants.PARAM_SHOUT_ID);
+        this.commentId = DataUtil.formatParameter(request, ApiConstants.PARAM_COMMENT_ID);
     }
 
     @Override
@@ -42,14 +45,19 @@ public class UnLikeHandler extends BaseApiHandler {
             errors.add(new ApiError(null, null, null));
             // missing.shoutId
         }
+
+        if (DataUtil.isEmpty(commentId)) {
+            errors.add(new ApiError(null, null, null));
+            // missing.shoutId
+        }
         return super.validateParameters();
     }
 
     @Override
     protected void performRequest() {
         try {
-            LikedShout likedShout = new LikedShout(userName, shoutId);
-            awsDao.unLikeShout(likedShout);
+            LikedComment likedComment = new LikedComment(userName, shoutId, commentId);
+            awsDao.unLikeComment(likedComment);
             responseObjects.add(false);
         } catch (Exception e) {
             this.responseString = "errors";

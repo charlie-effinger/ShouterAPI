@@ -10,6 +10,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import shouter.api.dao.AwsConstants;
 import shouter.api.utils.DataUtil;
+import sun.org.mozilla.javascript.internal.ast.Block;
+
+import java.util.Collection;
 
 /**
  * The User object bean. Mapped from the Dynamo DB table "Users"
@@ -30,6 +33,14 @@ public class User implements Comparable<User>{
     private String iosId;
 
     private String androidId;
+
+    private Collection<BlockedUser> blockedUsers;
+
+    private Collection<BlockedUser> blockedByUsers;
+
+    private Collection<BlockedShout> blockedShouts;
+
+    private boolean displayUserName;
 
     public User() { }
 
@@ -110,6 +121,30 @@ public class User implements Comparable<User>{
 
     public int compareTo(User o) {
         return userName.compareTo(o.userName);
+    }
+
+    public Collection<BlockedShout> getBlockedShouts() {
+        return blockedShouts;
+    }
+
+    public void setBlockedShouts(Collection<BlockedShout> blockedShouts) {
+        this.blockedShouts = blockedShouts;
+    }
+
+    public Collection<BlockedUser> getBlockedUsers() {
+        return blockedUsers;
+    }
+
+    public void setBlockedUsers(Collection<BlockedUser> blockedUsers) {
+        this.blockedUsers = blockedUsers;
+    }
+
+    public Collection<BlockedUser> getBlockedByUsers() {
+        return blockedByUsers;
+    }
+
+    public void setBlockedByUsers(Collection<BlockedUser> blockedByUsers) {
+        this.blockedByUsers = blockedByUsers;
     }
 
 }

@@ -64,11 +64,14 @@ public class DataUtil {
      * @return true if valid, false otherwise
      */
     public static boolean isDegrees(Double location) {
-        return (location != null && location > 0.0 && location < 360.0);
+        return (location != null && location > -180.0 && location < 180.0);
     }
 
     /**
-     * Checks if a String is 256 characters or less
+     * Checks if a String is 256 characters or less.0 && location < 360.0);
+    }
+
+    /**
      *
      * @param message the string to check
      * @return true if less than 257 characters, false otherwise

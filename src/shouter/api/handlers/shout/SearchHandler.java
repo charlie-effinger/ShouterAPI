@@ -82,7 +82,13 @@ public class SearchHandler extends BaseApiHandler {
     @Override
     protected void performRequest() {
         // retrieve and post the shouts
-        Collection<Shout> shouts = awsDao.getShouts(latitude, longitude, timeConstraint, locationConstraint, userName);
-        responseObjects.addAll(shouts);
+        try {
+            Collection<Shout> shouts = awsDao.getShouts(latitude, longitude, timeConstraint, locationConstraint, userName);
+            responseObjects.addAll(shouts);
+        } catch (Exception e) {
+            this.responseString = "errors";
+            responseObjects.add(new ApiError(null, null, null));
+        }
+
     }
 }

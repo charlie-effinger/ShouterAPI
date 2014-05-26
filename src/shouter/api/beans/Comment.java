@@ -14,7 +14,7 @@ import shouter.api.dao.AwsConstants;
  * @version $Revision$ $LastChangedDate$
  */
 @DynamoDBTable(tableName = AwsConstants.COMMENT_TABLE)
-public class Comment {
+public class Comment implements Comparable {
 
     private String id;
 
@@ -26,7 +26,11 @@ public class Comment {
 
     private String shoutId;
 
-    public Comment() { }
+    private int numLikes;
+
+    public Comment() {
+
+    }
 
     public Comment(String shoutId, String message, String userName) {
         this.userName = userName;
@@ -75,9 +79,23 @@ public class Comment {
         this.shoutId = shoutId;
     }
 
+    @DynamoDBAttribute(attributeName = AwsConstants.NUM_LIKES)
+    public int getNumLikes() {
+        return numLikes;
+    }
+
+    public void setNumLikes(int numLikes) {
+        this.numLikes = numLikes;
+    }
+
     @Override
     public String toString() {
-        return "Shout [id=" + id + ", shoutId=" + shoutId + ", message=" + message + ", timestamp=" + timestamp
+        return "Comment [id=" + id + ", shoutId=" + shoutId + ", message=" + message + ", timestamp=" + timestamp
                 + ", userName=" + userName + "]";
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return ((Comment) o).getTimestamp().compareTo(this.getTimestamp());
     }
 }

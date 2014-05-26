@@ -5,6 +5,7 @@
 package shouter.api.handlers.shout.like;
 
 import shouter.api.ApiConstants;
+import shouter.api.beans.ApiError;
 import shouter.api.beans.LikedShout;
 import shouter.api.handlers.BaseApiHandler;
 import shouter.api.utils.DataUtil;
@@ -34,10 +35,12 @@ public class LikeHandler extends BaseApiHandler {
     @Override
     protected boolean validateParameters() {
         if (DataUtil.isEmpty(userName)) {
+            errors.add(new ApiError(null, null, null));
             // missing.userName
         }
 
         if (DataUtil.isEmpty(shoutId)) {
+            errors.add(new ApiError(null, null, null));
             // missing.shoutId
         }
         return super.validateParameters();
@@ -45,8 +48,13 @@ public class LikeHandler extends BaseApiHandler {
 
     @Override
     protected void performRequest() {
-        LikedShout likedShout = new LikedShout(userName, shoutId);
-        awsDao.likeShout(likedShout);
-        responseObjects.add(true);
+        try {
+            LikedShout likedShout = new LikedShout(userName, shoutId);
+            awsDao.likeShout(likedShout);
+            responseObjects.add(true);
+        } catch (Exception e) {
+            this.responseString = "errors";
+            responseObjects.add(new ApiError(null, null, null));
+        }
     }
 }

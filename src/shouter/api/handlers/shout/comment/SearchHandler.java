@@ -23,7 +23,6 @@ import java.util.Collection;
 public class SearchHandler extends BaseApiHandler {
 
     private final String shoutId;
-    private final String userName;
 
     public SearchHandler(HttpServletRequest request) {
         super(request);
@@ -31,7 +30,6 @@ public class SearchHandler extends BaseApiHandler {
         this.responseString = "shouts";
 
         this.shoutId = DataUtil.formatParameter(request, ApiConstants.PARAM_SHOUT_ID);
-        this.userName = DataUtil.formatParameter(request, ApiConstants.PARAM_USER_NAME);
     }
 
     @Override
@@ -48,10 +46,15 @@ public class SearchHandler extends BaseApiHandler {
 
     @Override
     protected void performRequest() {
-        // retrieve all the comments
-        Collection<Comment> comments = awsDao.getShoutComments(shoutId, userName);
-        Shout parentShout = awsDao.getShoutFromId(shoutId);
-        parentShout.setComments(comments);
-        responseObjects.add(parentShout);
+        try {
+            // retrieve all the comments
+            Collection<Comment> comments = awsDao.getShoutComments(shoutId);
+            Shout parentShout = awsDao.getShoutFromId(shoutId);
+            parentShout.setComments(comments);
+            responseObjects.add(parentShout);
+        } catch (Exception e) {
+            this.responseString = "errors";
+            responseObjects.add(new ApiError(null, null, null));
+        }
     }
 }

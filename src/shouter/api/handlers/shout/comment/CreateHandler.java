@@ -15,6 +15,7 @@ import shouter.common.pushnotification.PushNotificationSender;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Handles posting a comment for a given shout. All comments of the given shout will be returned.
@@ -33,7 +34,7 @@ public class CreateHandler extends BaseApiHandler {
     public CreateHandler(HttpServletRequest request) {
         super(request);
 
-        this.responseString = "comments";
+        this.responseString = "shouts";
 
         this.userName = DataUtil.formatParameter(request, ApiConstants.PARAM_USER_NAME);
         this.shoutId = DataUtil.formatParameter(request, ApiConstants.PARAM_SHOUT_ID);
@@ -66,31 +67,35 @@ public class CreateHandler extends BaseApiHandler {
     @Override
     protected void performRequest() {
         // set up the comment
-        Comment commentToPost = new Comment(shoutId, message, userName);
-        commentToPost.setTimestamp(System.currentTimeMillis() / 1000L);
+        try {
+            Comment commentToPost = new Comment(shoutId, message, userName);
+            commentToPost.setTimestamp(System.currentTimeMillis() / 1000L);
 
-        // post and retrieve comments
-        Collection<Comment> comments = awsDao.postComment(commentToPost);
-        Shout parentShout = awsDao.getShoutFromId(shoutId);
-        parentShout.setComments(comments);
+            // post and retrieve comments
+            Collection<Comment> comments = awsDao.postComment(commentToPost);
+            Shout parentShout = awsDao.getShoutFromId(shoutId);
+            parentShout.setComments(comments);
+            responseObjects.add(parentShout);
+//            if (comments != null) {  // should never be null, just a sanity check I suppose
+//                Collection<String> userNames = new HashSet<String>();
+//                for (Comment comment: comments) {
+//                    if (!comment.getUserName().equals(commentToPost.getUserName())) {
+//                        userNames.add(comment.getUserName());
+//                    }
+//                }
+//                if (parentShout != null) { // add the original shouter to the phoneId list
+//                    if (!parentShout.getUserName().equals(commentToPost.getUserName())) {
+//                        userNames.add(parentShout.getUserName());
+//                    }
+//                }
+//                Map<String, Collection<String>> pushNotificationIds = awsDao.getPushNotificationIds(userNames);
+//                PushNotificationSender.sendNotifications(pushNotificationIds);
+//            }
 
-        if (comments != null) {  // should never be null, just a sanity check I suppose
-            Collection<String> userNames = new HashSet<String>();
-            for (Comment comment: comments) {
-                if (!comment.getUserName().equals(commentToPost.getUserName())) {
-                    userNames.add(comment.getUserName());
-                }
-            }
-            if (parentShout != null) { // add the original shouter to the phoneId list
-                if (!parentShout.getUserName().equals(commentToPost.getUserName())) {
-                    userNames.add(parentShout.getUserName());
-                }
-            }
-            PushNotificationSender.sendNotifications(userNames);
+        } catch (Exception e) {
+            this.responseString = "errors";
+            responseObjects.add(new ApiError(null, null, null));
         }
-
-        responseObjects.add(parentShout);
-
     }
 
 

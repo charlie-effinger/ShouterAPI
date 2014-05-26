@@ -12,8 +12,8 @@ import shouter.api.handlers.shout.SearchHandler;
 import shouter.api.handlers.shout.like.LikeHandler;
 import shouter.api.handlers.shout.like.UnLikeHandler;
 import shouter.api.handlers.user.AuthenticateHandler;
-import shouter.api.handlers.user.BlockHandler;
-import shouter.api.handlers.user.UnBlockHandler;
+import shouter.api.handlers.user.block.BlockHandler;
+import shouter.api.handlers.user.block.UnBlockHandler;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -50,8 +50,13 @@ public class ShouterService extends HttpServlet {
          */
         COMMENT_SEARCH(Arrays.asList("/shout/comment/search", "/shout/comment/search/")),
         /**
-         * Method used to authenticate a user.
+         * Method used to create a new shout.
          */
+        LIKE_COMMENT(Arrays.asList("/shout/comment/Like", "/shout/comment/like/")),
+        /**
+         * Method used to search for shouts.
+         */
+        UNLIKE_COMMENT(Arrays.asList("/shout/comment/unlike", "/shout/comment/unlike/")),
         /**
          * Method used to create a new shout.
          */
@@ -59,7 +64,7 @@ public class ShouterService extends HttpServlet {
         /**
          * Method used to search for shouts.
          */
-        UN_LIKE_SHOUT(Arrays.asList("/shout/unlike", "/shout/unlike/")),
+        UNLIKE_SHOUT(Arrays.asList("/shout/unlike", "/shout/unlike/")),
         /**
          * Method used to authenticate a user
          */
@@ -79,7 +84,24 @@ public class ShouterService extends HttpServlet {
         /**
          * Method used to update a user.
          */
-        UN_BLOCK_USER(Arrays.asList("/user/unblock", "/user/unblock/"));
+        UNBLOCK_USER(Arrays.asList("/user/unblock", "/user/unblock/")),
+        /**
+         * Method to block a shout.
+         */
+        BLOCK_SHOUT(Arrays.asList("/shout/block", "/shout/block/")),
+        /**
+         * Method to block a shout.
+         */
+        UNBLOCK_SHOUT(Arrays.asList("/shout/unblock", "/shout/unblock/")),
+        /**
+         * Method to retrieve blocked shouts
+         */
+        BLOCKED_SHOUT_SEARCH(Arrays.asList("/shout/block/search", "/shout/block/search")),
+        /**
+         * Method to retrieve blocked users
+         */
+        BLOCKED_USER_SEARCH(Arrays.asList("/user/block/search", "/user/block/search/"));
+
 
         private final Collection<String> paths;
         private static final Map<String, ServiceMethod> methodsByPath = new HashMap<String, ServiceMethod>();
@@ -118,6 +140,9 @@ public class ShouterService extends HttpServlet {
 
             // determine the proper handler
             String path = req.getPathInfo();
+            if (!req.getParameter("devKey").equals("sh0ut3r")) {
+                throw new Exception();
+            }
             BaseApiHandler handler = determineHandler(path, req);
 
             if (handler != null) {
@@ -184,10 +209,16 @@ public class ShouterService extends HttpServlet {
                 case COMMENT_SEARCH:
                     handler = new shouter.api.handlers.shout.comment.SearchHandler(request);
                     break;
+                case LIKE_COMMENT:
+                    handler = new shouter.api.handlers.shout.comment.like.LikeHandler(request);
+                    break;
+                case UNLIKE_COMMENT:
+                    handler = new shouter.api.handlers.shout.comment.like.UnLikeHandler(request);
+                    break;
                 case LIKE_SHOUT:
                     handler = new LikeHandler(request);
                     break;
-                case UN_LIKE_SHOUT:
+                case UNLIKE_SHOUT:
                     handler = new UnLikeHandler(request);
                     break;
                 case USER_AUTHENTICATE:
@@ -202,10 +233,15 @@ public class ShouterService extends HttpServlet {
                 case BLOCK_USER:
                     handler = new BlockHandler(request);
                     break;
-                case UN_BLOCK_USER:
+                case UNBLOCK_USER:
                     handler = new UnBlockHandler(request);
                     break;
-
+                case BLOCK_SHOUT:
+                    handler = new shouter.api.handlers.shout.block.BlockHandler(request);
+                    break;
+                case UNBLOCK_SHOUT:
+                    handler = new shouter.api.handlers.shout.block.UnBlockHandler(request);
+                    break;
             }
         }
 

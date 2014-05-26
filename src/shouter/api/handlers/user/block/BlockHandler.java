@@ -2,9 +2,10 @@
  * $Id$
  * $HeadURL$
  */
-package shouter.api.handlers.user;
+package shouter.api.handlers.user.block;
 
 import shouter.api.ApiConstants;
+import shouter.api.beans.ApiError;
 import shouter.api.beans.BlockedUser;
 import shouter.api.handlers.BaseApiHandler;
 import shouter.api.utils.DataUtil;
@@ -28,22 +29,25 @@ public class BlockHandler extends BaseApiHandler {
 
         this.responseString = "isBlocked";
         this.userName = DataUtil.formatParameter(request, ApiConstants.PARAM_USER_NAME);
-        this.blockedUserName = DataUtil.formatParameter(request, ApiConstants.PARAM_USER_NAME);
+        this.blockedUserName = DataUtil.formatParameter(request, ApiConstants.PARAM_BLOCKED_USER_NAME);
     }
 
     @Override
     protected boolean validateParameters() {
         if (DataUtil.isEmpty(userName)) {
             // missing.userName
+            errors.add(new ApiError(null, null, null));
         }
 
         if (DataUtil.isEmpty(blockedUserName)) {
             // missing.blockedUserName
+            errors.add(new ApiError(null, null, null));
         }
 
         if (errors.isEmpty()) {
             if (userName.equals(blockedUserName)) {
                 // can't block self
+                errors.add(new ApiError(null, null, null));
             }
         }
 
@@ -52,8 +56,13 @@ public class BlockHandler extends BaseApiHandler {
 
 
     protected void performRequest() {
-        BlockedUser blockedUser = new BlockedUser(userName, blockedUserName);
-        awsDao.blockUser(blockedUser);
-        responseObjects.add(true);
+        try {
+            BlockedUser blockedUser = new BlockedUser(userName, blockedUserName);
+            awsDao.blockUser(blockedUser);
+            responseObjects.add(true);
+        } catch (Exception e) {
+            this.responseString = "errors";
+            responseObjects.add(new ApiError(null, null, null));
+        }
     }
 }

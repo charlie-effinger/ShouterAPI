@@ -2,11 +2,11 @@
  * $Id$
  * $HeadURL$
  */
-package shouter.api.handlers.shout.like;
+package shouter.api.handlers.user.block;
 
 import shouter.api.ApiConstants;
 import shouter.api.beans.ApiError;
-import shouter.api.beans.LikedShout;
+import shouter.api.beans.BlockedUser;
 import shouter.api.handlers.BaseApiHandler;
 import shouter.api.utils.DataUtil;
 
@@ -18,38 +18,46 @@ import javax.servlet.http.HttpServletRequest;
  * @author chuck (charlie.effinger@gmail.com)
  * @version $Revision$ $LastChangedDate$
  */
-public class UnLikeHandler extends BaseApiHandler {
-
+public class UnBlockHandler extends BaseApiHandler {
     private final String userName;
 
-    private final String shoutId;
+    private final String blockedUserName;
 
-    public UnLikeHandler(HttpServletRequest request) {
+    public UnBlockHandler(HttpServletRequest request) {
         super(request);
-        this.responseString = "isLiked";
+
+        this.responseString = "isBlocked";
         this.userName = DataUtil.formatParameter(request, ApiConstants.PARAM_USER_NAME);
-        this.shoutId = DataUtil.formatParameter(request, ApiConstants.PARAM_SHOUT_ID);
+        this.blockedUserName = DataUtil.formatParameter(request, ApiConstants.PARAM_BLOCKED_USER_NAME);
     }
 
     @Override
     protected boolean validateParameters() {
         if (DataUtil.isEmpty(userName)) {
-            errors.add(new ApiError(null, null, null));
             // missing.userName
+            errors.add(new ApiError(null, null, null));
         }
 
-        if (DataUtil.isEmpty(shoutId)) {
+        if (DataUtil.isEmpty(blockedUserName)) {
+            // missing.blockedUserName
             errors.add(new ApiError(null, null, null));
-            // missing.shoutId
         }
+
+        if (errors.isEmpty()) {
+            if (userName.equals(blockedUserName)) {
+                // can't unblock self
+                errors.add(new ApiError(null, null, null));
+            }
+        }
+
         return super.validateParameters();
     }
 
     @Override
     protected void performRequest() {
         try {
-            LikedShout likedShout = new LikedShout(userName, shoutId);
-            awsDao.unLikeShout(likedShout);
+            BlockedUser blockedUser = new BlockedUser(userName, blockedUserName);
+            awsDao.unblockUser(blockedUser);
             responseObjects.add(false);
         } catch (Exception e) {
             this.responseString = "errors";

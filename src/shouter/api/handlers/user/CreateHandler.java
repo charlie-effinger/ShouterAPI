@@ -83,9 +83,14 @@ public class CreateHandler extends BaseApiHandler {
 
         } catch (NoSuchAlgorithmException ignore) { }
 
-        // set up and save the user
-        User user = new User(userName, sDigest, sSalt, iosId, androidId);
-        awsDao.saveUser(user);
-        responseObjects.add(user);
+        try {
+            // set up and save the user
+            User user = new User(userName, sDigest, sSalt, iosId, androidId);
+            awsDao.saveUser(user);
+            responseObjects.add(user);
+        } catch (Exception e) {
+            this.responseString = "errors";
+            responseObjects.add(new ApiError(null, null, null));
+        }
     }
 }

@@ -4,9 +4,6 @@
  */
 package shouter.api.dao;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Constants needed for interaction with the DynamoDB.
  *
@@ -25,6 +22,13 @@ public class AwsConstants {
     public static final String LIKED_SHOUTS_TABLE = "UserLikesShout";
 
     public static final String BLOCKED_USER_TABLE = "BlockedUser";
+
+    public static final String BLOCKED_SHOUT_TABLE = "BlockedShout";
+
+    public static final String BLOCKED_COMMENT_TABLE = "BlockedComment";
+
+    public static final String LIKED_COMMENTS_TABLE = "UserLikesComment";
+
 
     /* Columns */
     public static final String ID = "id";
@@ -56,6 +60,8 @@ public class AwsConstants {
     public static final String EXPIRATION_TIMESTAMP = "expirationTimestamp";
 
     public static final String BLOCKED_USER_NAME = "blockedUserName";
+
+    public static final String COMMENT_ID = "commentId";
 
     /* Default numerical values */
     public static final double DEFAULT_LOCATION_CONSTRAINT = 1.0 / 120.0;  // default location constraint is half a minute

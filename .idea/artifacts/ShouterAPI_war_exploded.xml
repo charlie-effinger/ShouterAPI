@@ -1,7 +1,7 @@
 <component name="ArtifactManager">
-  <artifact type="exploded-war" name="ShouterAPI:war exploded">
+  <artifact type="war" name="ShouterAPI:war exploded">
     <output-path>$PROJECT_DIR$/out/artifacts/ShouterAPI_war_exploded</output-path>
-    <root id="root">
+    <root id="archive" name="ShouterAPI_war exploded.war">
       <element id="javaee-facet-resources" facet="ShouterAPI/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">

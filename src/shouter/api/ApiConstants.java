@@ -17,6 +17,8 @@ public class ApiConstants {
      */
     public static final String PARAM_USER_NAME = "userName";
 
+    public static final String PARAM_BLOCKED_USER_NAME = "blockedUserName";
+
     public static final String PARAM_PASSWORD = "password";
 
     public static final String PARAM_PASSWORD_CONFIRM = "passwordConfirm";
@@ -36,6 +38,8 @@ public class ApiConstants {
     public static final String PARAM_TIME_CONSTRAINT = "timeConstraint";
 
     public static final String PARAM_LOCATION_CONSTRAINT = "locationConstraint";
+
+    public static final String PARAM_COMMENT_ID = "commentId";
 
 
     /*

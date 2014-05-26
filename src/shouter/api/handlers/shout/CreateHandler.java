@@ -93,15 +93,21 @@ public class CreateHandler extends BaseApiHandler {
 
     @Override
     protected void performRequest() {
-        Shout shoutToPost = new Shout();
-        shoutToPost.setLatitude(latitude);
-        shoutToPost.setLongitude(longitude);
-        shoutToPost.setMessage(message);
-        shoutToPost.setUserName(userName);
-        shoutToPost.setTimestamp(System.currentTimeMillis() / 1000L);
-        shoutToPost.setExpirationTimestamp(shoutToPost.getTimestamp());
-        Collection<Shout> shouts = awsDao.postShout(shoutToPost, timeConstraint, locationConstraint);
 
-        responseObjects.addAll(shouts);
+        try {
+            Shout shoutToPost = new Shout();
+            shoutToPost.setLatitude(latitude);
+            shoutToPost.setLongitude(longitude);
+            shoutToPost.setMessage(message);
+            shoutToPost.setUserName(userName);
+            shoutToPost.setTimestamp(System.currentTimeMillis() / 1000L);
+            shoutToPost.setExpirationTimestamp(shoutToPost.getTimestamp());
+            Collection<Shout> shouts = awsDao.postShout(shoutToPost, timeConstraint, locationConstraint);
+
+            responseObjects.addAll(shouts);
+        } catch (Exception e) {
+            this.responseString = "errors";
+            responseObjects.add(new ApiError(null, null, null));
+        }
     }
 }

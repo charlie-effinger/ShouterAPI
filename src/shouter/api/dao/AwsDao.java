@@ -16,10 +16,7 @@ import com.amazonaws.services.dynamodbv2.model.Condition;
 import shouter.api.beans.*;
 import shouter.api.utils.DataUtil;
 
-import javax.xml.crypto.Data;
 import java.util.*;
-import java.util.concurrent.locks.*;
-
 /**
  * Data access object for connecting with the Dynamo DB tables in AWS.
  *
@@ -45,50 +42,33 @@ public class AwsDao {
      */
     public Collection<Shout> getShouts(Double latitude, Double longitude, Long timeConstraint,
                                        Double locationConstraint, String userName) {
-        // default the time constraint to 15 minutes
-        if (timeConstraint == null) {
-            timeConstraint = AwsConstants.DEFAULT_TIME_CONSTRAINT;
-        }
 
-        if (locationConstraint == null) {
-            locationConstraint = AwsConstants.DEFAULT_LOCATION_CONSTRAINT;
-        }
-        long timeFrame = (System.currentTimeMillis() / 1000L) - timeConstraint;
-
-        // set up the latitude condition (between +/- LOCATION_CONSTRAINT)
-        Condition latitudeCondition = new Condition().withComparisonOperator(ComparisonOperator.BETWEEN.toString())
-                .withAttributeValueList(new AttributeValue().withN(String.valueOf(latitude - locationConstraint)),
-                        new AttributeValue().withN(String.valueOf(latitude + locationConstraint)));
-
-        // set up the longitude condition (between +/- LOCATION_CONSTRAINT)
-        Condition longitudeCondition = new Condition().withComparisonOperator(ComparisonOperator.BETWEEN.toString())
-                .withAttributeValueList(new AttributeValue().withN(String.valueOf(longitude - locationConstraint)),
-                        new AttributeValue().withN(String.valueOf(longitude + locationConstraint)));
-
-        // set up the time condition (> CURRENT_TIME - TIME_CONSTRAINT)
-        Condition timeCondition = new Condition().withComparisonOperator(ComparisonOperator.GT.toString())
-                .withAttributeValueList(new AttributeValue().withN(String.valueOf(timeFrame)));
-
-        List<AttributeValue> filterUserNames = getBlockedUserNames(userName);
-        filterUserNames.addAll(getBlockedByUserNames(userName));
-        Condition blockedUserNameCondition = new Condition()
-                .withComparisonOperator(ComparisonOperator.NE.toString())
-                .withAttributeValueList(filterUserNames);
+        Condition latitudeCondition = getBetweenCondition(latitude, locationConstraint);
+        Condition longitudeCondition = getBetweenCondition(longitude, locationConstraint);
+        Condition timeCondition = getTimeConstraintCondition(timeConstraint);
 
         // build the condition map
         Map<String, Condition> conditions = new HashMap<String, Condition>();
         conditions.put(AwsConstants.LATITUDE, latitudeCondition);
         conditions.put(AwsConstants.LONGITUDE, longitudeCondition);
         conditions.put(AwsConstants.EXPIRATION_TIMESTAMP, timeCondition);
-        conditions.put(AwsConstants.USER_NAME, blockedUserNameCondition);
+
+        Collection<BlockedUser> blockedByUsers = getBlockedByUsers(userName);
+        if (!blockedByUsers.isEmpty()) {
+            List<AttributeValue> blockedByUserList = new LinkedList<AttributeValue>();
+            for (BlockedUser user : blockedByUsers) {
+                blockedByUserList.add(new AttributeValue().withS(user.getUserName()));
+            }
+            Condition filteredUserNameCondition = new Condition()
+                    .withComparisonOperator(ComparisonOperator.NE.toString())
+                    .withAttributeValueList(blockedByUserList);
+            conditions.put(AwsConstants.USER_NAME, filteredUserNameCondition);
+        }
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
         scanExpression.setScanFilter(conditions);
 
-        Collection<Shout> shouts = mapper.scan(Shout.class, scanExpression);
-        shouts = addLikes(shouts, userName);
-
-        return shouts;
+        return mapper.scan(Shout.class, scanExpression);
     }
 
     /**
@@ -98,7 +78,7 @@ public class AwsDao {
      * @param userName - the userName to check for the shouts
      * @return - the same collection of shouts given, but with the proper 'liked' information
      */
-    private Collection<Shout> addLikes(Collection<Shout> shouts, String userName) {
+    public Collection<Shout> getLikedShouts(Collection<Shout> shouts, String userName, Long timeConstraint) {
         Collection<AttributeValue> shoutIds = new HashSet<AttributeValue>();
         Map<String, Shout> shoutsById = new TreeMap<String, Shout>();
         for (Shout shout : shouts) {
@@ -106,15 +86,12 @@ public class AwsDao {
             shoutsById.put(shout.getId(), shout);
         }
 
-        Condition shoutIdCondition = new Condition()
-                .withComparisonOperator(ComparisonOperator.IN.toString())
-                .withAttributeValueList(shoutIds);
-        Condition userNameCondition = new Condition()
-                .withComparisonOperator(ComparisonOperator.EQ.toString())
-                .withAttributeValueList(new AttributeValue(userName));
+        Condition timeCondition = getTimeConstraintCondition(timeConstraint);
+
+        Condition userNameCondition = getEqualConditionString(userName);
 
         Map<String, Condition> conditions = new HashMap<String, Condition>();
-        conditions.put(AwsConstants.SHOUT_ID, shoutIdCondition);
+        conditions.put(AwsConstants.EXPIRATION_TIMESTAMP, timeCondition);
         conditions.put(AwsConstants.USER_NAME, userNameCondition);
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
@@ -128,10 +105,32 @@ public class AwsDao {
         return shoutsById.values();
     }
 
+
+    public Collection<LikedShout> getLikedShouts(String userName, String shoutId) {
+
+        if (DataUtil.isEmpty(userName) && DataUtil.isEmpty(shoutId)) {
+            return null;
+        }
+
+        Map<String, Condition> conditions = new HashMap<String, Condition>();
+        if (!DataUtil.isEmpty(userName)) {
+            Condition userNameCondition = getEqualConditionString(userName);
+            conditions.put(AwsConstants.USER_NAME, userNameCondition);
+        }
+
+        if (!DataUtil.isEmpty(shoutId)) {
+            Condition shoutIdCondition = getEqualConditionString(shoutId);
+            conditions.put(AwsConstants.SHOUT_ID, shoutIdCondition);
+        }
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        scanExpression.setScanFilter(conditions);
+
+        return mapper.scan(LikedShout.class, scanExpression);
+    }
+
     public Collection<Shout> postShout(Shout shout, Long timeConstraint, Double locationConstraint) {
-        try {
-            mapper.save(shout);
-        } catch (Exception ignore) { }
+        mapper.save(shout);
 
         return getShouts(shout.getLatitude(), shout.getLongitude(),
                 timeConstraint, locationConstraint, shout.getUserName());
@@ -145,11 +144,9 @@ public class AwsDao {
         mapper.save(blockedUser);
     }
 
-    public List<AttributeValue> getBlockedUserNames(String userName) {
+    public Collection<BlockedUser> getBlockedUsers(String userName) {
         // set up the shoutId condition
-        Condition userNameCondition = new Condition()
-                .withComparisonOperator(ComparisonOperator.EQ.toString())
-                .withAttributeValueList(new AttributeValue().withS(userName));
+        Condition userNameCondition = getEqualConditionString(userName);
 
         Map<String, Condition> conditions = new HashMap<String, Condition>();
         conditions.put(AwsConstants.USER_NAME, userNameCondition);
@@ -157,21 +154,12 @@ public class AwsDao {
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
         scanExpression.setScanFilter(conditions);
 
-        Collection<BlockedUser> blockedUsers = mapper.scan(BlockedUser.class, scanExpression);
-
-        List<AttributeValue> blockedUserNames = new LinkedList<AttributeValue>();
-        for (BlockedUser blockedUser : blockedUsers) {
-            blockedUserNames.add(new AttributeValue(blockedUser.getBlockedUserName()));
-        }
-
-        return blockedUserNames;
+        return mapper.scan(BlockedUser.class, scanExpression);
     }
 
-    public List<AttributeValue> getBlockedByUserNames(String blockedUserName) {
+    public Collection<BlockedUser> getBlockedByUsers(String blockedUserName) {
         // set up the shoutId condition
-        Condition userNameCondition = new Condition()
-                .withComparisonOperator(ComparisonOperator.EQ.toString())
-                .withAttributeValueList(new AttributeValue().withS(blockedUserName));
+        Condition userNameCondition = getEqualConditionString(blockedUserName);
 
         Map<String, Condition> conditions = new HashMap<String, Condition>();
         conditions.put(AwsConstants.BLOCKED_USER_NAME, userNameCondition);
@@ -179,44 +167,57 @@ public class AwsDao {
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
         scanExpression.setScanFilter(conditions);
 
-        Collection<BlockedUser> blockedUsers = mapper.scan(BlockedUser.class, scanExpression);
-
-        List<AttributeValue> blockedByUserNames = new LinkedList<AttributeValue>();
-        for (BlockedUser blockedUser : blockedUsers) {
-            blockedByUserNames.add(new AttributeValue(blockedUser.getBlockedUserName()));
-        }
-
-        return blockedByUserNames;
+        return mapper.scan(BlockedUser.class, scanExpression);
     }
     public void likeShout(LikedShout likedShout) {
         mapper.save(likedShout);
-
-        //update expirationTimestamp and numLikes of shout
-        Shout shout = getShoutFromId(likedShout.getShoutId());
-        shout.setNumLikes(shout.getNumLikes()+1);
-        shout.setExpirationTimestamp(System.currentTimeMillis() / 1000L);
-        mapper.save(shout);
+        updateShout(likedShout.getShoutId(), 1, 0, true);
     }
 
     public void unLikeShout(LikedShout likedShout) {
         mapper.delete(likedShout);
+        updateShout(likedShout.getShoutId(), -1, 0, false);
+    }
 
-        //update numLikes of shout
-        Shout shout = getShoutFromId(likedShout.getShoutId());
-        shout.setNumLikes(shout.getNumLikes()-1);
+    public void likeComment(LikedComment likedComment) {
+        mapper.save(likedComment);
+        updateComment(likedComment.getCommentId(), 1);
+    }
+
+    public void unLikeComment(LikedComment likedComment) {
+        mapper.delete(likedComment);
+        updateComment(likedComment.getCommentId(), -1);
+    }
+
+    public void updateShout(String id, int numLikes, int numComments, boolean updateTimestamp) {
+        Shout shout = getShoutFromId(id);
+        shout.setNumLikes(shout.getNumLikes() + numLikes);
+        shout.setNumComments(shout.getNumComments() + numComments);
+        if (updateTimestamp) {
+            shout.setExpirationTimestamp(System.currentTimeMillis() / 1000L);
+        }
         mapper.save(shout);
     }
 
+    public void updateComment(String id, int numLikes) {
+        Comment comment = getCommentFromId(id);
+        comment.setNumLikes(comment.getNumLikes() + numLikes);
+        mapper.save(comment);
+    }
+
     public User saveUser(User user) {
-        try {
-            mapper.save(user);
-        }  catch (Exception ignore) { }
+        mapper.save(user);
         return user;
     }
 
 
     public User getUser(String userName) {
-        return mapper.load(User.class, userName);
+        User user = mapper.load(User.class, userName);
+//        if (user != null && !DataUtil.isEmpty(user.getUserName())) {
+//            user.setBlockedUsers(getBlockedUsers(user.getUserName()));
+//            user.setBlockedShouts(getBlockedShouts(user.getUserName()));
+//        }
+        return user;
     }
 
     public boolean checkUserName(String userName) {
@@ -230,20 +231,17 @@ public class AwsDao {
 
 
     public Collection<Comment> postComment(Comment comment) {
-        try {
-            mapper.save(comment);
-            Shout shout = getShoutFromId(comment.getShoutId());
-            shout.setNumComments(shout.getNumComments()+1);
-            mapper.save(shout);
-
-        } catch (Exception ignore) { }
-
-
-        return getShoutComments(comment.getShoutId(), comment.getUserName());
+        mapper.save(comment);
+        updateShout(comment.getShoutId(), 0, 1, true);
+        return getShoutComments(comment.getShoutId());
     }
 
     public Shout getShoutFromId(String id) {
         return mapper.load(Shout.class, id);
+    }
+
+    public Comment getCommentFromId(String id) {
+        return mapper.load(Comment.class, id);
     }
 
     /**
@@ -252,27 +250,18 @@ public class AwsDao {
      * @param shoutId - the shout ID to query for comment shouts
      * @return all comments for the given shout
      */
-    public Collection<Comment> getShoutComments(String shoutId, String userName) {
+    public Collection<Comment> getShoutComments(String shoutId) {
         // set up the shoutId condition
-        Condition shoutIdCondition = new Condition()
-                .withComparisonOperator(ComparisonOperator.EQ.toString())
-                .withAttributeValueList(new AttributeValue().withS(shoutId));
-
-        List<AttributeValue> filterUserNames = getBlockedUserNames(userName);
-        filterUserNames.addAll(getBlockedByUserNames(userName));
-
-        Condition blockedUserNameCondition = new Condition()
-                .withComparisonOperator(ComparisonOperator.NE.toString())
-                .withAttributeValueList(filterUserNames);
+        Condition shoutIdCondition = getEqualConditionString(shoutId);
 
         Map<String, Condition> conditions = new HashMap<String, Condition>();
         conditions.put(AwsConstants.SHOUT_ID, shoutIdCondition);
-        conditions.put(AwsConstants.USER_NAME, blockedUserNameCondition);
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
         scanExpression.setScanFilter(conditions);
 
-        return mapper.scan(Comment.class, scanExpression);
+        Collection<Comment> comments = mapper.scan(Comment.class, scanExpression);
+        return new TreeSet<Comment>(comments);
     }
 
     /**
@@ -302,7 +291,6 @@ public class AwsDao {
 
         Collection<User> users = mapper.scan(User.class, scanExpression);
 
-
         // parse the registrationIds
         Collection<String> iosIds = new HashSet<String>();
         Collection<String> androidIds = new HashSet<String>();
@@ -319,5 +307,63 @@ public class AwsDao {
         pushNotificationIds.put(AwsConstants.ANDROID_ID, androidIds);
 
         return pushNotificationIds;
+    }
+
+    public Collection<BlockedShout> getBlockedShouts(String userName) {
+        Condition userNameCondition = getEqualConditionString(userName);
+
+        Map<String, Condition> conditions = new HashMap<String, Condition>();
+        conditions.put(AwsConstants.USER_NAME, userNameCondition);
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        scanExpression.setScanFilter(conditions);
+        return mapper.scan(BlockedShout.class, scanExpression);
+    }
+
+    public Collection<BlockedComment> getBlockedComments(String userName) {
+        Condition userNameCondition = getEqualConditionString(userName);
+
+        Map<String, Condition> conditions = new HashMap<String, Condition>();
+        conditions.put(AwsConstants.USER_NAME, userNameCondition);
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        scanExpression.setScanFilter(conditions);
+        return mapper.scan(BlockedComment.class, scanExpression);
+    }
+
+    public void blockShout(BlockedShout blockedShout) {
+        mapper.save(blockedShout);
+    }
+
+    public void unBlockShout(BlockedShout blockedShout) {
+        mapper.delete(blockedShout);
+    }
+
+    private Condition getTimeConstraintCondition(Long timeConstraint) {
+        // set up the time condition (> CURRENT_TIME - TIME_CONSTRAINT)
+        // default the time constraint to 15 minutes
+        if (timeConstraint == null) {
+            timeConstraint = AwsConstants.DEFAULT_TIME_CONSTRAINT;
+        }
+        long timeFrame = (System.currentTimeMillis() / 1000L) - timeConstraint;
+
+        return new Condition().withComparisonOperator(ComparisonOperator.GT.toString())
+                .withAttributeValueList(new AttributeValue().withN(String.valueOf(timeFrame)));
+    }
+
+    private Condition getEqualConditionString(String userName) {
+        return new Condition()
+                .withComparisonOperator(ComparisonOperator.EQ.toString())
+                .withAttributeValueList(new AttributeValue().withS(userName));
+    }
+
+    private Condition getBetweenCondition(Double location, Double locationConstraint) {
+        if (locationConstraint == null) {
+            locationConstraint = AwsConstants.DEFAULT_LOCATION_CONSTRAINT;
+        }
+
+        return new Condition().withComparisonOperator(ComparisonOperator.BETWEEN.toString())
+                .withAttributeValueList(new AttributeValue().withN(String.valueOf(location - locationConstraint)),
+                        new AttributeValue().withN(String.valueOf(location + locationConstraint)));
     }
 }
